@@ -1,0 +1,3 @@
+add_executable(forward_kinematics forward_kinematics.cpp)
+
+target_link_libraries(forward_kinematics PRIVATE Stepper pthread)

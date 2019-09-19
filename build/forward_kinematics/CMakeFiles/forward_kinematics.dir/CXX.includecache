@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Stepper/src/Stepper/Stepper.hpp
+vector
+-
+
+/home/kaushik/Documents/RobotArm/forward_kinematics/forward_kinematics.cpp
+Stepper/Stepper.hpp
+/home/kaushik/Documents/RobotArm/forward_kinematics/Stepper/Stepper.hpp
+wiringPi.h
+-
+iostream
+-
+thread
+-
+ctime
+-
+
