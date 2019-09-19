@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/forward_kinematics.dir/forward_kinematics.cpp.o  -o forward_kinematics ../Stepper/libStepper.a -lpthread -lwiringPi 
