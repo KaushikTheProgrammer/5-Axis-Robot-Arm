@@ -20,12 +20,14 @@ const int arm2Switch = 27;
 const int arm2Dir = 13;
 const int arm2Trig = 12;
 const int arm2MicroStep = 4;
+const float arm2Multiplier = 49.2064; // steps per degree <-- with ALL gearing included
 
 const float arm3Length = 128.581;
 const int arm3Switch = 28;
 const int arm3Dir = 22;
 const int arm3Trig = 21;
 const int arm3MicroStep = 4;
+const float arm3Multiplier = 9.84127;
 
 const int gripperDir = 10;
 const int gripperTrig = 6;
@@ -48,11 +50,6 @@ void home(Stepper& axis, int homeSwitch) {
 	}
 }
 
-float angleToStep(Stepper& axis, float angle) {
-	return angle * ( (float) axis.getMaxSteps() / 360);
-}
-
-
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
@@ -63,11 +60,21 @@ void setup() {
 int main() {
 	wiringPiSetup();
 	setup();
-
-	home(base, baseSwitch);
-	home(arm1, arm1Switch);
-	home(arm2, arm2Switch);
-	home(arm3, arm3Switch);
+	
+	float desiredAngle = 90.0;
+	float arm2Steps = (int)(desiredAngle * arm2Multiplier);
+	float arm3Steps = (int)(desiredAngle * arm3Multiplier);
+	
+	std::cout << arm2Steps << std::endl;
+	std::cout << arm3Steps << std::endl;
+	
+	arm2.absStep(-arm2Steps);
+	arm3.absStep(arm3Steps);
+	
+	
+	
+	
+	
 	
 	return 0;
 }
