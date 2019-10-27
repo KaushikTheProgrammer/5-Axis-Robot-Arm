@@ -67,7 +67,7 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
-	int stepsToTake = angleToStep(desiredAngle - 90, axisMultiplier) - axis.getCurrentPosition();
+	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
 	std::cout << stepsToTake << std::endl;
 	axis.relStep(stepsToTake);
 }
@@ -99,16 +99,16 @@ int main() {
 			case 1:
 			{
 				std::cout << "Base Homing" << std::endl;
-				home(base, baseSwitch);
+				//home(base, baseSwitch);
 				
 				std::cout << "Arm1 Homing" << std::endl;
 				home(arm1, arm1Switch);
 				
 				std::cout << "Arm2 Homing" << std::endl;
-				home(arm2, arm2Switch);
+				//home(arm2, arm2Switch);
 				
 				std::cout << "Arm3 Homing" << std::endl;
-				home(arm3, arm3Switch);
+				//home(arm3, arm3Switch);
 				
 				std::cout << "Robot Homing Finished" << std::endl;
 				
@@ -127,6 +127,7 @@ int main() {
 				std::cout << "Please enter an angle for Joint 1: ";
 				std::cin >> arm1Angle;
 				
+				
 				std::cout << "Please enter an angle for Joint 2: ";
 				std::cin >> arm2Angle;
 				
@@ -135,11 +136,15 @@ int main() {
 				
 				std::cout << "Please enter an angle for the Gripper: ";
 				std::cin >> gripperAngle;
+				arm1Angle -= 90;
+				arm2Angle -= 90;
+				arm3Angle -= 90;
 				
 				std::cout << "Moving to those angles...." << std::endl;
 				// goToAngle here
+				goToAngle(arm1, arm1Angle, arm1Multiplier);
 				goToAngle(arm2, arm2Angle, arm2Multiplier);
-				goToAngle(arm3, arm3Angle, arm3Multiplier);
+				goToAngle(arm3, arm3Angle + arm2Angle, arm3Multiplier);
 				
 				std::cout << "Destination Reached!" << std::endl;
 				std::cout << "Calculating Final Positions...." << std::endl;
