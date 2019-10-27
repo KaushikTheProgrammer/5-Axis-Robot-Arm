@@ -3,42 +3,46 @@
 #include <iostream>
 #include <thread>
 #include <ctime>
+#include <cmath>
 
 const int baseSwitch = 24;
 const int baseDir = 9;
 const int baseTrig = 8;
 const int baseMicroStep = 4;
 const float baseMultiplier = 11.1111; // steps per degree <-- with ALL gearing included
+const float baseHeight = 148.5;
+const float baseDPS = 1; // baseMultiplier;
 
-const float arm1Length = 145;
+const float arm1Length = 145;//145
 const int arm1Switch = 25;
 const int arm1Dir = 2;
 const int arm1Trig = 0;
 const int arm1MicroStep = 8;
-const float arm1Multiplier = 54.6296; // steps per degree <-- with ALL gearing included
+const float arm1Multiplier = 6.8287 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
-const float arm2Length = 125;
+const float arm2Length = 125;//125
 const int arm2Switch = 27;
 const int arm2Dir = 13;
 const int arm2Trig = 12;
-const int arm2MicroStep = 4;
-const float arm2Multiplier = 49.2064; // steps per degree <-- with ALL gearing included
+const int arm2MicroStep = 8;
+const float arm2Multiplier = 12.3016 * arm2MicroStep; // steps per degree <-- with ALL gearing included
 
-const float arm3Length = 128.581;
+const float arm3Length = 128.581;//128.581
 const int arm3Switch = 28;
 const int arm3Dir = 22;
 const int arm3Trig = 21;
-const int arm3MicroStep = 4;
-const float arm3Multiplier = 9.84127; // steps per degree <-- with ALL gearing included
+const int arm3MicroStep = 8;
+const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
 
 const int gripperDir = 10;
 const int gripperTrig = 6;
 const int gripperMicroStep = 8;
 
 
-// gripper max = 14500
+#define PI 3.14159265
 
+// gripper max = 14500
 
 Stepper base(baseDir, baseTrig, baseMicroStep);
 Stepper arm1(arm1Dir, arm1Trig, arm1MicroStep);
@@ -58,41 +62,111 @@ void home(Stepper& axis, int homeSwitch) {
 	axis.setCurrentPosition(0);
 }
 
+int angleToStep(float desiredAngle, float axisMultiplier) {
+	return (int) (desiredAngle * axisMultiplier);
+}
+
+void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
+	int stepsToTake = angleToStep(desiredAngle - 90, axisMultiplier) - axis.getCurrentPosition();
+	std::cout << stepsToTake << std::endl;
+	axis.relStep(stepsToTake);
+}
+
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
 	pinMode(arm2Switch, INPUT);
 	pinMode(arm3Switch, INPUT);
+	std::cout << "Pins Initialized" << std::endl;
 }
 
 int main() {
 	wiringPiSetup();
+	std::cout << "WiringPi Ready" << std::endl;
 	setup();
 	
-	float desiredAngle = 65.0;
-	//int baseSteps = (int)(desiredAngle * baseMultiplier);
-	int arm1Steps = (int)(desiredAngle * arm1Multiplier);
-	//int arm2Steps = (int)(desiredAngle * arm2Multiplier);
-	//int arm3Steps = (int)(desiredAngle * arm3Multiplier);
+	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
 	
-	//std::cout << baseSteps << std::endl;
-	std::cout << arm1Steps << std::endl;
-	//std::cout << arm2Steps << std::endl;
-	//std::cout << arm3Steps << std::endl;
-	
-	//base.absStep(baseSteps);
-	arm1.absStep(-arm1Steps);
-	//arm2.absStep(arm2Steps);
-	//arm3.absStep(arm3Steps);
-	
-	// 72 degrees from home to 0 pos for arm1
-	
-	
-
-	
-	
-	
-	
-	
+	while(true) {
+		
+		std::cout << "1 - Home All Axes, 2 - Enter joint angles, 3 - Quit Demo" << std::endl;
+		
+		int option;
+		std::cout << "What would you like to do? ";
+		std::cin >> option;
+		
+		switch(option) {
+			case 1:
+			{
+				std::cout << "Base Homing" << std::endl;
+				home(base, baseSwitch);
+				
+				std::cout << "Arm1 Homing" << std::endl;
+				home(arm1, arm1Switch);
+				
+				std::cout << "Arm2 Homing" << std::endl;
+				home(arm2, arm2Switch);
+				
+				std::cout << "Arm3 Homing" << std::endl;
+				home(arm3, arm3Switch);
+				
+				std::cout << "Robot Homing Finished" << std::endl;
+				
+				arm1.relStep(-angleToStep(arm1Zero, arm1Multiplier));
+				arm1.setCurrentPosition(0);
+			}
+			break;
+			
+			case 2:
+			{
+				float arm1Angle;
+				float arm2Angle;
+				float arm3Angle;
+				float gripperAngle;
+				
+				std::cout << "Please enter an angle for Joint 1: ";
+				std::cin >> arm1Angle;
+				
+				std::cout << "Please enter an angle for Joint 2: ";
+				std::cin >> arm2Angle;
+				
+				std::cout << "Please enter an angle for Joint 3: ";
+				std::cin >> arm3Angle;
+				
+				std::cout << "Please enter an angle for the Gripper: ";
+				std::cin >> gripperAngle;
+				
+				std::cout << "Moving to those angles...." << std::endl;
+				// goToAngle here
+				goToAngle(arm2, arm2Angle, arm2Multiplier);
+				goToAngle(arm3, arm3Angle, arm3Multiplier);
+				
+				std::cout << "Destination Reached!" << std::endl;
+				std::cout << "Calculating Final Positions...." << std::endl;
+				
+				float p1X = arm1Length * cos(arm1Angle * PI / 180.0);
+				float p1Y = arm1Length * sin(arm1Angle * PI / 180.0) + baseHeight;
+				
+				float p2X = p1X + arm2Length * cos(arm2Angle * PI / 180.0);
+				float p2Y = p1Y + arm2Length * sin(arm2Angle * PI / 180.0);
+				
+				float p3X = p2X + arm3Length * cos(arm3Angle * PI / 180.0);
+				float p3Y = p2Y + arm3Length * sin(arm3Angle * PI / 180.0);
+				
+				std::cout << "Point 1: (" << p1X << ", " << p1Y << ")" << std::endl;
+				std::cout << "Point 2: (" << p2X << ", " << p2Y << ")" << std::endl;
+				std::cout << "Point 3: (" << p3X << ", " << p3Y << ")" << std::endl;
+			}
+			break;
+		
+			case 3:
+				exit(0);
+			
+			default:
+				std::cout << "Invalid Input! Please choose a valid option" << std::endl;
+		}	
+		
+	}
+		
 	return 0;
 }
