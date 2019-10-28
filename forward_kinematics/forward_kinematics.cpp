@@ -8,8 +8,8 @@
 const int baseSwitch = 24;
 const int baseDir = 9;
 const int baseTrig = 8;
-const int baseMicroStep = 4;
-const float baseMultiplier = 11.1111; // steps per degree <-- with ALL gearing included
+const int baseMicroStep = 8;
+const float baseMultiplier = 2.7778 * baseMicroStep; // steps per degree <-- with ALL gearing included
 const float baseHeight = 148.5;
 const float baseDPS = 1; // baseMultiplier;
 
@@ -72,6 +72,8 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	axis.relStep(stepsToTake);
 }
 
+
+
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
@@ -118,11 +120,15 @@ int main() {
 			break;
 			
 			case 2:
-			{
+			{	
+				float baseAngle;
 				float arm1Angle;
 				float arm2Angle;
 				float arm3Angle;
-				float gripperAngle;
+				int gripperAngle;
+				
+				std::cout << "Please enter an angle for the Base: ";
+				std::cin >> baseAngle;
 				
 				std::cout << "Please enter an angle for Joint 1: ";
 				std::cin >> arm1Angle;
@@ -134,17 +140,27 @@ int main() {
 				std::cout << "Please enter an angle for Joint 3: ";
 				std::cin >> arm3Angle;
 				
-				std::cout << "Please enter an angle for the Gripper: ";
+				std::cout << "Gripper Open(1) or Close(2): ";
 				std::cin >> gripperAngle;
 				arm1Angle -= 90;
 				arm2Angle -= 90;
 				arm3Angle -= 90;
 				
+				//arm2Angle += arm1Angle
+				
 				std::cout << "Moving to those angles...." << std::endl;
 				// goToAngle here
+				goToAngle(base, baseAngle, baseMultiplier);
 				goToAngle(arm1, arm1Angle, arm1Multiplier);
 				goToAngle(arm2, arm2Angle, arm2Multiplier);
-				goToAngle(arm3, arm3Angle + arm2Angle, arm3Multiplier);
+				goToAngle(arm3, arm3Angle, arm3Multiplier);
+				
+				if (gripperAngle == 1) {
+					gripper.absStep(0);
+				} else if (gripperAngle == 2) {
+					gripper.absStep(14000);
+				}
+				
 				
 				std::cout << "Destination Reached!" << std::endl;
 				std::cout << "Calculating Final Positions...." << std::endl;
