@@ -183,3 +183,4 @@ int Stepper::getMaxSteps() {
 void Stepper::setCurrentPosition(int POSITION) {
     _currPosition = POSITION;
 }
+

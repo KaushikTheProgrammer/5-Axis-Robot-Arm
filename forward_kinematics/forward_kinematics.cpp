@@ -150,8 +150,8 @@ int main() {
 				
 				std::cout << "Moving to those angles...." << std::endl;
 				// goToAngle here
-				goToAngle(base, baseAngle, baseMultiplier);
-				goToAngle(arm1, arm1Angle, arm1Multiplier);
+				//goToAngle(base, baseAngle, baseMultiplier);
+				//goToAngle(arm1, arm1Angle, arm1Multiplier);
 				goToAngle(arm2, arm2Angle, arm2Multiplier);
 				goToAngle(arm3, arm3Angle, arm3Multiplier);
 				
