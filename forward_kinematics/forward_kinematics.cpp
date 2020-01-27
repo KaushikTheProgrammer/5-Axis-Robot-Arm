@@ -18,7 +18,7 @@ const int arm1Switch = 25;
 const int arm1Dir = 2;
 const int arm1Trig = 0;
 const int arm1MicroStep = 8;
-const float arm1Multiplier = 6.8287 * arm1MicroStep; // steps per degree <-- with ALL gearing included
+const float arm1Multiplier = 26.6 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
 const float arm2Length = 125;//125
@@ -89,7 +89,7 @@ int main() {
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
 	
-	while(true) {
+	/*while(true) {
 		
 		std::cout << "1 - Home All Axes, 2 - Enter joint angles, 3 - Quit Demo" << std::endl;
 		
