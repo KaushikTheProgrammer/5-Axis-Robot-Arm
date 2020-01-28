@@ -73,7 +73,6 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 }
 
 
-
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
@@ -88,6 +87,8 @@ int main() {
 	setup();
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
+	arm1.relStep(10000);
+	// goToAngle(arm1, 90, arm1Multiplier);
 	
 	/*while(true) {
 		
