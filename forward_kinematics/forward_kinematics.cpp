@@ -18,7 +18,7 @@ const int arm1Switch = 25;
 const int arm1Dir = 2;
 const int arm1Trig = 0;
 const int arm1MicroStep = 8;
-const float arm1Multiplier = 26.6 * arm1MicroStep; // steps per degree <-- with ALL gearing included
+const float arm1Multiplier = 26.064 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
 const float arm2Length = 125;//125
@@ -87,7 +87,9 @@ int main() {
 	setup();
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
-	arm1.relStep(10000);
+	arm1.setAcceleration(2.5);
+	arm1.relStep(-18766);//18766
+	
 	// goToAngle(arm1, 90, arm1Multiplier);
 	
 	/*while(true) {
@@ -188,7 +190,7 @@ int main() {
 				std::cout << "Invalid Input! Please choose a valid option" << std::endl;
 		}	
 		
-	}
+	}*/
 		
 	return 0;
 }
