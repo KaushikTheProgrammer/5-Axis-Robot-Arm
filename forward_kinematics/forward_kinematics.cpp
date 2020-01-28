@@ -91,12 +91,16 @@ int main() {
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
 
 	arm1.setAcceleration(5);
-	arm1.setMaxVelocity(32);
+	arm1.setMaxVelocity(30);
 	std::cout << "before thread calls" << std::endl;
-	//std::thread baseThread(goToAngle, std::ref(base), -90.0, baseMultiplier);
-	std::thread arm1Thread(goToAngle, std::ref(arm1), -135.0, arm1Multiplier);
-	//baseThread.join();
-	arm1Thread.join();
+	while(true) {
+		int desiredAngle = 0;
+		std::cin >> desiredAngle;
+		std::thread arm1Thread(goToAngle, std::ref(arm1), desiredAngle, arm1Multiplier);
+		arm1Thread.join();
+	}
+	
+	
 	std::cout << "threads complete" << std::endl;
 	
 	
