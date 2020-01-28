@@ -9,7 +9,7 @@ const int baseSwitch = 24;
 const int baseDir = 9;
 const int baseTrig = 8;
 const int baseMicroStep = 8;
-const float baseMultiplier = 0.5555 * baseMicroStep; // steps per degree <-- with ALL gearing included
+const float baseMultiplier = -2.7778 * baseMicroStep; // steps per degree <-- with ALL gearing included
 const float baseHeight = 148.5;
 const float baseDPS = 1; // baseMultiplier;
 
