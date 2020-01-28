@@ -67,9 +67,11 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
+	std::cout << "in function" << std::endl;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
 	std::cout << stepsToTake << std::endl;
 	axis.relStep(stepsToTake);
+	std::cout << "function complete" << std::endl;
 }
 
 
@@ -91,8 +93,13 @@ int main() {
 	// arm1.setAcceleration(2.5);
 	// goToAngle(arm1, 90, arm1Multiplier);
 
-	base.setAcceleration(2);
-	goToAngle(base, 90, baseMultiplier);
+	// base.setAcceleration(2);
+	// goToAngle(base, 90, baseMultiplier);
+	std::cout << "before thread" << std::endl;
+	std::thread baseThread(goToAngle, base, 90, baseMultiplier);
+	baseThread.join();
+	std::cout << "thread complete" << std::endl;
+	
 	
 	/*while(true) {
 		
