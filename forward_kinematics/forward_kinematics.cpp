@@ -17,7 +17,7 @@ const float arm1Length = 145;//145
 const int arm1Switch = 25;
 const int arm1Dir = 2;
 const int arm1Trig = 0;
-const int arm1MicroStep = 8;
+const int arm1MicroStep = 16;
 const float arm1Multiplier = -26.064 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
@@ -69,7 +69,7 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	std::cout << "in function" << std::endl;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
-	std::cout << stepsToTake << std::endl;
+	std::cout << "steps to take" << stepsToTake << std::endl;
 	axis.relStep(stepsToTake);
 	std::cout << "function complete" << std::endl;
 }
@@ -89,16 +89,14 @@ int main() {
 	setup();
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
-	
-	// arm1.setAcceleration(2.5);
-	// goToAngle(arm1, 90, arm1Multiplier);
 
-	// base.setAcceleration(2);
-	// goToAngle(base, 90, baseMultiplier);
-	std::cout << "before thread" << std::endl;
-	std::thread baseThread(goToAngle, base, 90, baseMultiplier);
-	baseThread.join();
-	std::cout << "thread complete" << std::endl;
+	arm1.setAcceleration(0.5);
+	std::cout << "before thread calls" << std::endl;
+	//std::thread baseThread(goToAngle, std::ref(base), -90.0, baseMultiplier);
+	std::thread arm1Thread(goToAngle, std::ref(arm1), 90.0, arm1Multiplier);
+	//baseThread.join();
+	arm1Thread.join();
+	std::cout << "threads complete" << std::endl;
 	
 	
 	/*while(true) {
