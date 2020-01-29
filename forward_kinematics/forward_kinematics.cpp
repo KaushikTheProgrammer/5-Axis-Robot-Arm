@@ -84,7 +84,7 @@ int main() {
 	while(true) {
 		int arm1Angle = 0;
 		int arm2Angle = 0;
-		std::cin >> arm1Angle >> " " >> arm2Angle;
+		std::cin >> arm1Angle >> arm2Angle;
 		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
 		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
 		arm1Thread.join();
