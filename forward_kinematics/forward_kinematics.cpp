@@ -50,28 +50,13 @@ Stepper arm2(arm2Dir, arm2Trig, arm2MicroStep);
 Stepper arm3(arm3Dir, arm3Trig, arm3MicroStep);
 Stepper gripper(gripperDir, gripperTrig, gripperMicroStep);
 
-void home(Stepper& axis, int homeSwitch) {
-	int switchCount = 0;
-	while(switchCount != 15) {
-		int state = digitalRead(homeSwitch);
-		if (state == 1) {
-			switchCount += 1;
-		}
-		axis.relStep(1);
-	}
-	axis.setCurrentPosition(0);
-}
-
 int angleToStep(float desiredAngle, float axisMultiplier) {
 	return (int) (desiredAngle * axisMultiplier);
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
-	std::cout << "in function" << std::endl;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
-	std::cout << "steps to take" << stepsToTake << std::endl;
 	axis.relStep(stepsToTake);
-	std::cout << "function complete" << std::endl;
 }
 
 
@@ -90,18 +75,25 @@ int main() {
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
 
-	arm1.setAcceleration(5);
-	arm1.setMaxVelocity(30);
-	std::cout << "before thread calls" << std::endl;
+	// arm1.setAcceleration(5);
+	// arm1.setMaxVelocity(30);
+	// while(true) {
+	// 	int desiredAngle = 0;
+	// 	std::cin >> desiredAngle;
+	// 	std::thread arm1Thread(goToAngle, std::ref(arm1), desiredAngle, arm1Multiplier);
+	// 	arm1Thread.join();
+	// }
+
+	arm2.setAcceleration(3);
+	arm2.setMaxVelocity(8.5);
 	while(true) {
 		int desiredAngle = 0;
 		std::cin >> desiredAngle;
-		std::thread arm1Thread(goToAngle, std::ref(arm1), desiredAngle, arm1Multiplier);
-		arm1Thread.join();
+		std::thread arm2Thread(goToAngle, std::ref(arm2), desiredAngle, arm2Multiplier);
+		arm2Thread.join();
 	}
 	
 	
-	std::cout << "threads complete" << std::endl;
 	
 	
 	/*while(true) {
