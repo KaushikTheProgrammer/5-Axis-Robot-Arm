@@ -3,6 +3,7 @@
 #include <iostream>
 #include <thread>
 #include <ctime>
+#include <numeric>
 #include <cmath>
 
 const int baseSwitch = 24;
@@ -54,6 +55,12 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	axis.relStep(stepsToTake);
 }
 
+// return vector projection of a onto b
+void calculateProjection(float a[], float b[]) {
+	float dotProduct = inner_product(a, a + a.size(), b, 0);
+	std::cout <<  dotProduct;
+}
+
 
 void setup() {
 	pinMode(baseSwitch, INPUT);
@@ -82,34 +89,6 @@ int main() {
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
 	
-	int baseAngle = 0;
-	int arm1Angle = 0;
-	int arm2Angle = 0;
-	int arm3Angle = 0;
-
-	/*while(true) {
-		std::cout << "Base Angle: ";
-		std::cin >> baseAngle;
-
-		std::cout << "Arm1 Angle: ";
-		std::cin >> arm1Angle;
-
-		std::cout << "Arm2 Angle: ";
-		std::cin >> arm2Angle;
-		
-		std::cout << "Arm3 Angle: ";
-		std::cin >> arm3Angle;
-
-		std::thread baseThread(goToAngle, std::ref(base), baseAngle, baseMultiplier);
-		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-		std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
-		
-		baseThread.join();
-		arm1Thread.join();
-		arm2Thread.join();
-		arm3Thread.join();
-	}*/
-		
+	calculateProjection({3, 4}, {5, 8});
 	return 0;
 }
