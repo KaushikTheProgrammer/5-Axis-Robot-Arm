@@ -82,7 +82,7 @@ int main() {
 	arm2.setMaxVelocity(9);
 
 	arm3.setAcceleration(0.5);
-	arm3.setMaxVelocity(1.5);
+	arm3.setMaxVelocity(1.6);
 	
 	int arm1Angle = 0;
 	int arm2Angle = 0;
