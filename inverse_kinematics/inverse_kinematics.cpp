@@ -39,11 +39,6 @@ const int gripperDir = 10;
 const int gripperTrig = 6;
 const int gripperMicroStep = 8;
 
-
-#define PI 3.14159265
-
-// gripper max = 14500
-
 Stepper base(baseDir, baseTrig, baseMicroStep);
 Stepper arm1(arm1Dir, arm1Trig, arm1MicroStep);
 Stepper arm2(arm2Dir, arm2Trig, arm2MicroStep);
