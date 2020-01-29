@@ -85,7 +85,7 @@ int main() {
 	// }
 
 	arm2.setAcceleration(3);
-	arm2.setMaxVelocity(8.5);
+	arm2.setMaxVelocity(9);
 	while(true) {
 		int desiredAngle = 0;
 		std::cin >> desiredAngle;
