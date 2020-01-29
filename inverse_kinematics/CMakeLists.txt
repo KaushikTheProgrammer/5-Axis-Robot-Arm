@@ -1,0 +1,3 @@
+add_executable(inverse_kinematics inverse_kinematics.cpp)
+
+target_link_libraries(inverse_kinematics PRIVATE Stepper pthread)

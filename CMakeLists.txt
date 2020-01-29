@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(Stepper)
 add_subdirectory(forward_kinematics)
+add_subdirectory(inverse_kinematics)
