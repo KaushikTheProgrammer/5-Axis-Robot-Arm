@@ -124,16 +124,10 @@ float stepToAngle(int currentPosition, float axisMultiplier) {
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
+    desiredAngle = 90 - desiredAngle;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
     int axisPriority = getPriority(axisMultiplier);
 	axis.relStep(stepsToTake);
-    //int counter = 0;
-    //for(Stepper &axis : armJoints) {
-		//if(counter > axisPriority) {
-			//axis.setCurrentPosition(angleToStep(desiredAngle, armMultipliers[counter]));
-		//}
-		//counter += 1;
-	//}
 }
 
 void setup() {
@@ -177,9 +171,9 @@ int main() {
    
     fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
     
-    float arm1Angle = 90 - calculateAngle(p1);
-    float arm2Angle = 90 - calculateAngle(p2) - arm1Angle;
-    float arm3Angle = 90 - calculateAngle(p3) - arm2Angle;
+    float arm1Angle = calculateAngle(p1);
+    float arm2Angle = calculateAngle(p2);
+    float arm3Angle = calculateAngle(p3);
     
     std::cout << "FinalAngles" << std::endl;
 
@@ -187,13 +181,15 @@ int main() {
     std::cout << arm2Angle << std::endl;
     std::cout << arm3Angle << std::endl;
 
+    arm1Angle = 60;
+
     std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-    std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-    std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+    // std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
+    // std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
     
-    arm1Thread.join();
-    arm2Thread.join();
-    arm3Thread.join();
+    // arm1Thread.join();
+    // arm2Thread.join();
+    // arm3Thread.join();
 
 	return 0;
 }
