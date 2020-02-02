@@ -162,14 +162,8 @@ int main() {
     const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
     const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
     const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
-   
-    fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 
-    std::cout << "Joint 1 Angle " << calculateAngle(p1) << std::endl;
-    std::cout << "Joint 2 Angle " << calculateAngle(p2) << std::endl;
-    std::cout << "Joint 3 Angle " << calculateAngle(p3) << std::endl;
-
-	arm1.setAcceleration(5);
+    arm1.setAcceleration(5);
 	arm1.setMaxVelocity(30);
 	
 	arm2.setAcceleration(3);
@@ -180,19 +174,16 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
-	
-	std::cout << "Positioning" << std::endl;
-	
-	std::cout << arm1.getCurrentPosition() << std::endl;
-    std::cout << arm2.getCurrentPosition() << std::endl;
-    std::cout << arm3.getCurrentPosition() << std::endl;
+   
+    fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
+    
+    float arm1Angle = calculateAngle(p1);
+    float arm2Angle = calculateAngle(p2);
+    float arm3Angle = calculateAngle(p3);
 
-    goToAngle(arm3, 45, arm3Multiplier);
-    std::cout << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
-    std::cout << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
-    std::cout << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
-
-	
+    goToAngle(arm1, arm1Angle, arm1Multiplier);
+    goToAngle(arm2, arm2Angle, arm2Multiplier);
+    goToAngle(arm3, arm3Angle, arm3Multiplier);	
 
 	return 0;
 }
