@@ -104,7 +104,7 @@ float calculateAngle(float joint[]) {
     return atan2(joint[1], joint[0]) * 180 / PI;
 }
 
-int getPriority(float axisMultiplier) {
+int getPriority(const float axisMultiplier) {
     switch(axisMultiplier) {
         case arm1Multiplier:
             return 0;
@@ -147,7 +147,7 @@ int main() {
 	
 	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
 
-	const float base[] = {0, baseHeight};
+	const float basePosition[] = {0, baseHeight};
     float p0[] = {0, baseHeight};
     float p1[] = {0, baseHeight + arm1Length};
     float p2[] = {0, baseHeight + arm1Length + arm2Length};
@@ -155,11 +155,11 @@ int main() {
     float targetPosition[] = {300,300};
     float threshold = 0.01;
 
-    const Vector2f j1 = Vector2f(p1[0] - base[0], p1[1] - base[1]);
+    const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
     const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
     const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
    
-    fabrik(j1, j2, j3, base, p0, p1, p2, p3, targetPosition, threshold);
+    fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 
     std::cout << "Joint 1 Angle " << calculateAngle(p1) << std::endl;
     std::cout << "Joint 2 Angle " << calculateAngle(p2) << std::endl;
@@ -178,9 +178,9 @@ int main() {
 	base.setMaxVelocity(8.5);
 
     goToAngle(arm1, 45, arm1Multiplier);
-    std::cout << stepToAngle(arm1.getCurrentPosition, arm1Multiplier) << std::endl;
-    std::cout << stepToAngle(arm2.getCurrentPosition, arm2Multiplier) << std::endl;
-    std::cout << stepToAngle(arm3.getCurrentPosition, arm3Multiplier) << std::endl;
+    std::cout << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
+    std::cout << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
+    std::cout << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
 
 	
 
