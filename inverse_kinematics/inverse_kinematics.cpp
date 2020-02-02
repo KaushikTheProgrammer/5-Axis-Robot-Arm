@@ -102,7 +102,9 @@ void fabrik(const Vector2f joint1, const Vector2f joint2, const Vector2f joint3,
 }
 
 float calculateAngle(float joint[]) {
-    return atan2(joint[1], joint[0]) * 180 / PI;
+	std::cout << "in calc angle" << std::endl;
+	std::cout << joint[1] << " " << joint[0] << " " << joint[1] / joint[0] << std::endl;
+    return std::atan((joint[1] - baseHeight) / joint[0]) * 180 / PI;
 }
 
 int getPriority(const float axisMultiplier) {
@@ -120,13 +122,11 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 }
 
 float stepToAngle(int currentPosition, float axisMultiplier) {
-    return (currentPosition / axisMultiplier);
+    return 90 + (currentPosition / axisMultiplier);
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
-    desiredAngle = 90 - desiredAngle;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
-    int axisPriority = getPriority(axisMultiplier);
 	axis.relStep(stepsToTake);
 }
 
@@ -150,7 +150,6 @@ int main() {
     float p1[] = {0, baseHeight + arm1Length};
     float p2[] = {0, baseHeight + arm1Length + arm2Length};
     float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
-    float targetPosition[] = {300,300};
     float threshold = 0.01;
 
     const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
@@ -168,28 +167,38 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
+	float xCoord;
+	float yCoord;
+	
+	while(true) {
+		std::cin >> xCoord;
+		std::cin >> yCoord;
+		
+		float targetPosition[] = {xCoord, yCoord};
+	
    
-    fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
-    
-    float arm1Angle = calculateAngle(p1);
-    float arm2Angle = calculateAngle(p2);
-    float arm3Angle = calculateAngle(p3);
-    
-    std::cout << "FinalAngles" << std::endl;
+		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
+		
+		float arm1Angle = 90 - calculateAngle(p1);
+		float arm2Angle = 90 - arm1Angle;
+		float arm3Angle = 90 - arm2Angle;
+		
 
-    std::cout << arm1Angle << std::endl;
-    std::cout << arm2Angle << std::endl;
-    std::cout << arm3Angle << std::endl;
+		
+		std::cout << "FinalAngles" << std::endl;
 
-    arm1Angle = 60;
-
-    std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-    // std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-    // std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
-    
-    // arm1Thread.join();
-    // arm2Thread.join();
-    // arm3Thread.join();
+		std::cout << arm1Angle << std::endl;
+		std::cout << arm2Angle << std::endl;
+		std::cout << arm3Angle << std::endl;
+		
+		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
+		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
+		std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+		
+		arm1Thread.join();
+		arm2Thread.join();
+		arm3Thread.join();
+	}
 
 	return 0;
 }

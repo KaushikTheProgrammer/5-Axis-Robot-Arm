@@ -53,6 +53,7 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
+	desiredAngle = 90 - desiredAngle;
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
 	axis.relStep(stepsToTake);
 }
