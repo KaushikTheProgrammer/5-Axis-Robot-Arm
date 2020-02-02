@@ -200,9 +200,9 @@ int main() {
 		arm2Thread.join();
 		arm3Thread.join();
 
-        std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition());
-        std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition());
-        std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition());
+        std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier);
+        std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier);
+        std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier);
 	}
 
 	return 0;
