@@ -130,6 +130,10 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	axis.relStep(stepsToTake);
 }
 
+float lawOfCos(float a, float b, float c) {
+    return std::acos((pow(c, 2) - pow(a, 2) - pow(b, 2)) / (-2*a*b))
+}
+
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
@@ -179,12 +183,11 @@ int main() {
    
 		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 		
-		float arm1Angle = 90 - calculateAngle(p1);
-		float arm2Angle = 90 - arm1Angle;
-		float arm3Angle = 90 - arm2Angle;
+		float arm1Angle = calculateAngle(p1);
+		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1], 2) + pow(p2[0], 2)));
+		float arm3Angle = 180 - lawOfCos(arm2Length, arm3Length, sqrt(pow(p3[1] - p2[1], 2) + pow(p3[0] - p3[0], 2)));
 		
-
-		
+      
 		std::cout << "FinalAngles" << std::endl;
 
 		std::cout << arm1Angle << std::endl;
