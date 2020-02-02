@@ -184,7 +184,7 @@ int main() {
 		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 		
 		float arm1Angle = calculateAngle(p1);
-		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1], 2) + pow(p2[0], 2)));
+		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1] - basePosition[1], 2) + pow(p2[0] - basePosition[0], 2)));
 		float arm3Angle = 180 - lawOfCos(arm2Length, arm3Length, sqrt(pow(p3[1] - p2[1], 2) + pow(p3[0] - p3[0], 2)));
 		
       
