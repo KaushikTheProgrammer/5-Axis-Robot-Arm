@@ -1,7 +1,7 @@
 add_library (
-	vmath
-	src/vmath/vmath.cpp
-	src/vmath/vmath.hpp
+	Stepper
+	src/Stepper/Stepper.cpp
+	src/Stepper/Stepper.hpp
 )
 
-target_include_directories(vmath PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(Stepper PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")

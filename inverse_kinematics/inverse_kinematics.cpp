@@ -2,9 +2,10 @@
 #include <wiringPi.h>
 #include <iostream>
 #include <thread>
-#include <ctime>
-#include <numeric>
 #include <cmath>
+#include "vmath.h"
+
+#define PI 3.14159265
 
 const int baseSwitch = 24;
 const int baseDir = 9;
@@ -55,12 +56,59 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	axis.relStep(stepsToTake);
 }
 
-// return vector projection of a onto b
-void calculateProjection(float a[], float b[]) {
-	float dotProduct = inner_product(a, a + a.size(), b, 0);
-	std::cout <<  dotProduct;
+void moveJoint(Vector2f joint, float prev[], float curr[], const float target[]) {
+    Vector2f deltaVector = Vector2f(target[0] - curr[0], target[1] - curr[1]);
+    curr[0] += deltaVector.x;
+    curr[1] += deltaVector.y;
+    deltaVector.x = curr[0] - prev[0];
+    deltaVector.y = curr[1] - prev[1];
+    deltaVector.normalize();
+    deltaVector *= joint.length();
+    prev[0] = curr[0] - deltaVector.x;
+    prev[1] = curr[1] - deltaVector.y;
 }
 
+void showJoint(float joint[]) {
+    std::cout << "(" << joint[0] << ","<< joint[1] << ")" << std::endl;
+}
+
+void fabrik(const Vector2f joint1, const Vector2f joint2, const Vector2f joint3, const float base[], float j0[], float j1[], float j2[], float j3[], const float target[], float threshold) {
+    float totalDist = sqrt(pow(base[0] - target[0], 2) + pow(base[1] - target[1], 2));
+    std::cout << totalDist << std::endl;
+
+    if(totalDist < (joint1.length() + joint2.length() + joint3.length())) {
+        float remainingDist = sqrt(pow(j2[0] - target[0], 2) + pow(j2[1] - target[1], 2));
+        while(remainingDist > threshold) {
+            // Reach back
+            moveJoint(joint3, j2, j3, target);
+            moveJoint(joint2, j1, j2, j2);
+            moveJoint(joint1, j0, j1, j1);
+
+            // Reach forward
+            moveJoint(joint1, j1, j0, base);
+            moveJoint(joint2, j2, j1, j1);
+            moveJoint(joint3, j3, j2, j2);
+            
+            showJoint(j0);
+            showJoint(j1);
+            showJoint(j2);
+            showJoint(j3);
+            
+            // Calculate remaining distance
+            remainingDist = sqrt(pow(j3[0] - target[0], 2) + pow(j3[1] - target[1], 2));
+            std::cout << remainingDist << std::endl;
+        }
+    }
+    std::cout << "Final Positions" << std::endl;
+    showJoint(j0);
+    showJoint(j1);
+    showJoint(j2);
+    showJoint(j3);
+}
+
+float calculateAngle(float joint[]) {
+    return atan2(joint[1], joint[0]) * 180 / PI;
+}
 
 void setup() {
 	pinMode(baseSwitch, INPUT);
@@ -75,7 +123,25 @@ int main() {
 	std::cout << "WiringPi Ready" << std::endl;
 	setup();
 	
-	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
+	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
+
+	const float base[] = {0, baseHeight};
+    float p0[] = {0, baseHeight};
+    float p1[] = {0, baseHeight + arm1Length};
+    float p2[] = {0, baseHeight + arm1Length + arm2Length};
+    float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
+    float targetPosition[] = {1,4};
+    float threshold = 0.01;
+
+    const Vector2f j1 = Vector2f(p1[0] - base[0], p1[1] - base[1]);
+    const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
+    const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
+   
+    fabrik(j1, j2, j3, base, p0, p1, p2, p3, targetPosition, threshold);
+
+    std::cout << "Joint 1 Angle " << calculateAngle(p1) << std::endl;
+    std::cout << "Joint 2 Angle " << calculateAngle(p2) << std::endl;
+    std::cout << "Joint 3 Angle " << calculateAngle(p3) << std::endl;
 
 	arm1.setAcceleration(5);
 	arm1.setMaxVelocity(30);
@@ -89,6 +155,6 @@ int main() {
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
 	
-	calculateProjection({3, 4}, {5, 8});
+
 	return 0;
 }
