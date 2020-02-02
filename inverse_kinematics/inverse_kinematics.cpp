@@ -47,14 +47,8 @@ Stepper arm2(arm2Dir, arm2Trig, arm2MicroStep);
 Stepper arm3(arm3Dir, arm3Trig, arm3MicroStep);
 Stepper gripper(gripperDir, gripperTrig, gripperMicroStep);
 
-int angleToStep(float desiredAngle, float axisMultiplier) {
-	return (int) (desiredAngle * axisMultiplier);
-}
-
-void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
-	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
-	axis.relStep(stepsToTake);
-}
+Stepper armJoints[] = {arm3, arm2, arm1};
+float armMultipliers[] = {arm3Multiplier, arm2Multiplier, arm1Multiplier};
 
 void moveJoint(Vector2f joint, float prev[], float curr[], const float target[]) {
     Vector2f deltaVector = Vector2f(target[0] - curr[0], target[1] - curr[1]);
@@ -110,6 +104,34 @@ float calculateAngle(float joint[]) {
     return atan2(joint[1], joint[0]) * 180 / PI;
 }
 
+int getPriority(float axisMultiplier) {
+    switch(axisMultiplier) {
+        case arm1Multiplier:
+            return 0;
+        case arm2Multiplier:
+            return 1;
+        case arm3Multiplier:
+            return 2;
+    }
+}
+
+int angleToStep(float desiredAngle, float axisMultiplier) {
+	return (int) (desiredAngle * axisMultiplier);
+}
+
+float stepToAngle(int currentPosition, float axisMultiplier) {
+    return (currentPosition / axisMultiplier);
+}
+
+void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
+	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
+    int axisPriority = getPriority(axisMultiplier);
+	axis.relStep(stepsToTake);
+    for(int n = axisPriority + 1; n < 3; n += 1) {
+        armJoints[n].setCurrentPosition(angleToStep(desiredAngle, armMultipliers[n]));
+    }
+}
+
 void setup() {
 	pinMode(baseSwitch, INPUT);
 	pinMode(arm1Switch, INPUT);
@@ -130,7 +152,7 @@ int main() {
     float p1[] = {0, baseHeight + arm1Length};
     float p2[] = {0, baseHeight + arm1Length + arm2Length};
     float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
-    float targetPosition[] = {1,4};
+    float targetPosition[] = {300,300};
     float threshold = 0.01;
 
     const Vector2f j1 = Vector2f(p1[0] - base[0], p1[1] - base[1]);
@@ -154,6 +176,12 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
+
+    goToAngle(arm1, 45, arm1Multiplier);
+    std::cout << stepToAngle(arm1.getCurrentPosition, arm1Multiplier) << std::endl;
+    std::cout << stepToAngle(arm2.getCurrentPosition, arm2Multiplier) << std::endl;
+    std::cout << stepToAngle(arm3.getCurrentPosition, arm3Multiplier) << std::endl;
+
 	
 
 	return 0;
