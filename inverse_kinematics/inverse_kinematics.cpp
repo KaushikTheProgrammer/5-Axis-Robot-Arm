@@ -84,26 +84,24 @@ void fabrik(const Vector2f joint1, const Vector2f joint2, const Vector2f joint3,
             moveJoint(joint2, j2, j1, j1);
             moveJoint(joint3, j3, j2, j2);
             
-            showJoint(j0);
-            showJoint(j1);
-            showJoint(j2);
-            showJoint(j3);
+            // showJoint(j0);
+            // showJoint(j1);
+            // showJoint(j2);
+            // showJoint(j3);
             
             // Calculate remaining distance
             remainingDist = sqrt(pow(j3[0] - target[0], 2) + pow(j3[1] - target[1], 2));
             std::cout << remainingDist << std::endl;
         }
     }
-    std::cout << "Final Positions" << std::endl;
-    showJoint(j0);
-    showJoint(j1);
-    showJoint(j2);
-    showJoint(j3);
+    // std::cout << "Final Positions" << std::endl;
+    // showJoint(j0);
+    // showJoint(j1);
+    // showJoint(j2);
+    // showJoint(j3);
 }
 
 float calculateAngle(float joint[]) {
-	std::cout << "in calc angle" << std::endl;
-	std::cout << joint[1] << " " << joint[0] << " " << joint[1] / joint[0] << std::endl;
     return std::atan((joint[1] - baseHeight) / joint[0]) * 180 / PI;
 }
 
@@ -122,7 +120,7 @@ int angleToStep(float desiredAngle, float axisMultiplier) {
 }
 
 float stepToAngle(int currentPosition, float axisMultiplier) {
-    return 90 + (currentPosition / axisMultiplier);
+    return currentPosition / axisMultiplier;
 }
 
 void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
@@ -131,10 +129,6 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 }
 
 float lawOfCos(float a, float b, float c) {
-	std::cout << "a " << a << std::endl;
-	std::cout << "b " << b << std::endl;
-	std::cout << "c " << c << std::endl;
-	std::cout << (pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2*a*b) << std::endl;
     return std::acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2*a*b)) * 180 / PI;
 }
 
@@ -205,6 +199,10 @@ int main() {
 		arm1Thread.join();
 		arm2Thread.join();
 		arm3Thread.join();
+
+        std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition());
+        std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition());
+        std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition());
 	}
 
 	return 0;
