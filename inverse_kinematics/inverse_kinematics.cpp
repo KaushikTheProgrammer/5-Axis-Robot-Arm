@@ -41,6 +41,11 @@ const int gripperDir = 10;
 const int gripperTrig = 6;
 const int gripperMicroStep = 8;
 
+#define baseMultiplier -2.7778 * baseMicroStep
+#define arm1Multiplier -26.064 * arm1MicroStep
+#define arm2Multiplier 12.3016 * arm2MicroStep
+#define arm3Multiplier 2.46032 * arm3MicroStep
+
 Stepper base(baseDir, baseTrig, baseMicroStep);
 Stepper arm1(arm1Dir, arm1Trig, arm1MicroStep);
 Stepper arm2(arm2Dir, arm2Trig, arm2MicroStep);
