@@ -148,15 +148,15 @@ int main() {
 	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
 
 	const float basePosition[] = {0, baseHeight};
+    const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
+    const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
+    const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
+
+    float threshold = 0.01;
     float p0[] = {0, baseHeight};
     float p1[] = {0, baseHeight + arm1Length};
     float p2[] = {0, baseHeight + arm1Length + arm2Length};
     float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
-    float threshold = 0.01;
-
-    const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
-    const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
-    const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
 
     arm1.setAcceleration(5);
 	arm1.setMaxVelocity(30);
@@ -178,7 +178,10 @@ int main() {
 		
 		float targetPosition[] = {xCoord, yCoord};
 	
-   
+        std::cout << "Arm1 Position " << showJoint(p1) << std::endl;
+        std::cout << "Arm2 Position " << showJoint(p2) << std::endl;
+        std::cout << "Arm3 Position " << showJoint(p3) << std::endl;
+        
 		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 		
 		float arm1Angle = 90 - calculateAngle(p1);
@@ -200,9 +203,9 @@ int main() {
 		arm2Thread.join();
 		arm3Thread.join();
 
-        std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
-        std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;;
-        std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;;
+        // std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
+        // std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
+        // std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
 	}
 
 	return 0;
