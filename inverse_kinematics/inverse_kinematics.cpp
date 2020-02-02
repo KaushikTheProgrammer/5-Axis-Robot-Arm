@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <cmath>
+#include <functional>
 #include "vmath/vmath.h"
 #include "Stepper/Stepper.hpp"
 
@@ -47,8 +48,8 @@ Stepper arm2(arm2Dir, arm2Trig, arm2MicroStep);
 Stepper arm3(arm3Dir, arm3Trig, arm3MicroStep);
 Stepper gripper(gripperDir, gripperTrig, gripperMicroStep);
 
-Stepper armJoints[] = {arm3, arm2, arm1};
-float armMultipliers[] = {arm3Multiplier, arm2Multiplier, arm1Multiplier};
+std::reference_wrapper<Stepper> armJoints[] = {arm1, arm2, arm3};
+float armMultipliers[] = {arm1Multiplier, arm2Multiplier, arm3Multiplier};
 
 void moveJoint(Vector2f joint, float prev[], float curr[], const float target[]) {
     Vector2f deltaVector = Vector2f(target[0] - curr[0], target[1] - curr[1]);
@@ -126,9 +127,13 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 	int stepsToTake = angleToStep(desiredAngle, axisMultiplier) - axis.getCurrentPosition();
     int axisPriority = getPriority(axisMultiplier);
 	axis.relStep(stepsToTake);
-    for(int n = axisPriority + 1; n < 3; n += 1) {
-        armJoints[n].setCurrentPosition(angleToStep(desiredAngle, armMultipliers[n]));
-    }
+    int counter = 0;
+    for(Stepper &axis : armJoints) {
+		if(counter > axisPriority) {
+			axis.setCurrentPosition(angleToStep(desiredAngle, armMultipliers[counter]));
+		}
+		counter += 1;
+	}
 }
 
 void setup() {
@@ -175,8 +180,14 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
+	
+	std::cout << "Positioning" << std::endl;
+	
+	std::cout << arm1.getCurrentPosition() << std::endl;
+    std::cout << arm2.getCurrentPosition() << std::endl;
+    std::cout << arm3.getCurrentPosition() << std::endl;
 
-    goToAngle(arm1, 45, arm1Multiplier);
+    goToAngle(arm3, 45, arm3Multiplier);
     std::cout << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
     std::cout << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
     std::cout << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
