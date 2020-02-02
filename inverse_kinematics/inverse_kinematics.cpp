@@ -11,7 +11,7 @@ const int baseSwitch = 24;
 const int baseDir = 9;
 const int baseTrig = 8;
 const int baseMicroStep = 8;
-const float baseMultiplier = -2.7778 * baseMicroStep; // steps per degree <-- with ALL gearing included
+// const float baseMultiplier = -2.7778 * baseMicroStep; // steps per degree <-- with ALL gearing included
 const float baseHeight = 148.5;
 const float baseDPS = 1; // baseMultiplier;
 
@@ -20,7 +20,7 @@ const int arm1Switch = 25;
 const int arm1Dir = 2;
 const int arm1Trig = 0;
 const int arm1MicroStep = 8;
-const float arm1Multiplier = -26.064 * arm1MicroStep; // steps per degree <-- with ALL gearing included
+// const float arm1Multiplier = -26.064 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
 const float arm2Length = 125;//125
@@ -28,14 +28,14 @@ const int arm2Switch = 27;
 const int arm2Dir = 13;
 const int arm2Trig = 12;
 const int arm2MicroStep = 8;
-const float arm2Multiplier = 12.3016 * arm2MicroStep; // steps per degree <-- with ALL gearing included
+// const float arm2Multiplier = 12.3016 * arm2MicroStep; // steps per degree <-- with ALL gearing included
 
 const float arm3Length = 128.581;//128.581
 const int arm3Switch = 28;
 const int arm3Dir = 22;
 const int arm3Trig = 21;
 const int arm3MicroStep = 8;
-const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
+// const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
 
 const int gripperDir = 10;
 const int gripperTrig = 6;
