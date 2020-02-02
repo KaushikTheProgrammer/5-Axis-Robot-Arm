@@ -181,9 +181,13 @@ int main() {
     float arm2Angle = calculateAngle(p2);
     float arm3Angle = calculateAngle(p3);
 
-    goToAngle(arm1, arm1Angle, arm1Multiplier);
-    goToAngle(arm2, arm2Angle, arm2Multiplier);
-    goToAngle(arm3, arm3Angle, arm3Multiplier);	
+    std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
+    std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
+    std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+    
+    arm1Thread.join();
+    arm2Thread.join();
+    arm3Thread.join();
 
 	return 0;
 }
