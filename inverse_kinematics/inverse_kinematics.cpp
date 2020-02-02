@@ -69,8 +69,7 @@ void showJoint(float joint[]) {
 
 void fabrik(const Vector2f joint1, const Vector2f joint2, const Vector2f joint3, const float base[], float j0[], float j1[], float j2[], float j3[], const float target[], float threshold) {
     float totalDist = sqrt(pow(base[0] - target[0], 2) + pow(base[1] - target[1], 2));
-    std::cout << (joint1.length() + joint2.length() + joint3.length());
-
+    
     if(totalDist < (joint1.length() + joint2.length() + joint3.length())) {
         float remainingDist = sqrt(pow(j2[0] - target[0], 2) + pow(j2[1] - target[1], 2));
         while(remainingDist > threshold) {
@@ -94,7 +93,7 @@ void fabrik(const Vector2f joint1, const Vector2f joint2, const Vector2f joint3,
             std::cout << remainingDist << std::endl;
         }
     } else {
-        std::cout << "Unreachable target: " << totalDist;
+        std::cout << "Unreachable target: " << totalDist << " > " <<  (joint1.length() + joint2.length() + joint3.length()) << std::endl;
     }
     // std::cout << "Final Positions" << std::endl;
     // showJoint(j0);
