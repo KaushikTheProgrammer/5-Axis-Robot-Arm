@@ -177,11 +177,7 @@ int main() {
 		std::cin >> yCoord;
 		
 		float targetPosition[] = {xCoord, yCoord};
-	
-        std::cout << "Arm1 Position " << showJoint(p1) << std::endl;
-        std::cout << "Arm2 Position " << showJoint(p2) << std::endl;
-        std::cout << "Arm3 Position " << showJoint(p3) << std::endl;
-        
+	        
 		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 		
 		float arm1Angle = 90 - calculateAngle(p1);
@@ -190,10 +186,13 @@ int main() {
 		
       
 		std::cout << "FinalAngles" << std::endl;
-
 		std::cout << arm1Angle << std::endl;
 		std::cout << arm2Angle << std::endl;
 		std::cout << arm3Angle << std::endl;
+
+        showJoint(p1);
+        showJoint(p2);
+        showJoint(p3);
 		
 		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
 		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
