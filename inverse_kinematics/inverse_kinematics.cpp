@@ -178,16 +178,23 @@ int main() {
     fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
     
     float arm1Angle = calculateAngle(p1);
-    float arm2Angle = calculateAngle(p2);
-    float arm3Angle = calculateAngle(p3);
+    float arm2Angle = calculateAngle(p2) -= arm1Angle;
+    float arm3Angle = calculateAngle(p3) -= arm2Angle;
 
-    std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-    std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-    std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+    std::cout << arm1Angle << std::endl;
+    std::cout << arm2Angle << std::endl;
+    std::cout << arm3Angle << std::endl;
+
+
     
-    arm1Thread.join();
-    arm2Thread.join();
-    arm3Thread.join();
+
+    // std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
+    // std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
+    // std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+    
+    // arm1Thread.join();
+    // arm2Thread.join();
+    // arm3Thread.join();
 
 	return 0;
 }
