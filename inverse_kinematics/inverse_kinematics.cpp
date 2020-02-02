@@ -148,15 +148,15 @@ int main() {
 	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
 
 	const float basePosition[] = {0, baseHeight};
-    const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
-    const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
-    const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
 
     float threshold = 0.01;
     float p0[] = {0, baseHeight};
     float p1[] = {0, baseHeight + arm1Length};
     float p2[] = {0, baseHeight + arm1Length + arm2Length};
     float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
+    const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
+    const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
+    const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
 
     arm1.setAcceleration(5);
 	arm1.setMaxVelocity(30);
