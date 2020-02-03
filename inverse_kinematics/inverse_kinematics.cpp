@@ -26,8 +26,8 @@ const float arm1Zero = 65.0;
 
 const float arm2Length = 125;//125
 const int arm2Switch = 27;
-const int arm2Dir = 13;
-const int arm2Trig = 12;
+const int arm2Dir = 10;
+const int arm2Trig = 6;
 const int arm2MicroStep = 8;
 const float arm2Multiplier = -12.3016 * arm2MicroStep; // steps per degree <-- with ALL gearing included
 
@@ -38,8 +38,8 @@ const int arm3Trig = 21;
 const int arm3MicroStep = 8;
 const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
 
-const int gripperDir = 10;
-const int gripperTrig = 6;
+const int gripperDir = 2;
+const int gripperTrig = 0;
 const int gripperMicroStep = 8;
 
 Stepper base(baseDir, baseTrig, baseMicroStep);
@@ -170,43 +170,44 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
-	float xCoord;
-	float yCoord;
-	
-	while(true) {
-		std::cin >> xCoord;
-		std::cin >> yCoord;
-		
-		float targetPosition[] = {xCoord, yCoord};
 	        
-		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPosition, threshold);
 		
+	float targetPositions[2][3] = {{300, 300, 0}, {200, 400, 0}};
+	
+	for(int i = 0; i < 2; i += 1) {
+		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPositions[i], threshold);
+	
+		float baseAngle = targetPositions[i][2];
 		float arm1Angle = 90 - calculateAngle(p1);
 		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1] - basePosition[1], 2) + pow(p2[0] - basePosition[0], 2)));
 		float arm3Angle = 180 - lawOfCos(arm2Length, arm3Length, sqrt(pow(p3[1] - p1[1], 2) + pow(p3[0] - p1[0], 2)));
 		
-      
 		std::cout << "FinalAngles" << std::endl;
 		std::cout << arm1Angle << std::endl;
 		std::cout << arm2Angle << std::endl;
 		std::cout << arm3Angle << std::endl;
 
-        showJoint(p1);
-        showJoint(p2);
-        showJoint(p3);
+		showJoint(p1);
+		showJoint(p2);
+		showJoint(p3); 
 		
+		std::thread baseThread(goToAngle, std::ref(base), baseAngle, baseMultiplier);
 		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
 		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
 		std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
 		
+		baseThread.join();
 		arm1Thread.join();
 		arm2Thread.join();
 		arm3Thread.join();
-
-        // std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
-        // std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
-        // std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
 	}
+	
+
+
+	std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
+	std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
+	std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
+	
 
 	return 0;
 }
