@@ -18,23 +18,23 @@ const float baseDPS = 1; // baseMultiplier;
 
 const float arm1Length = 145;//145
 const int arm1Switch = 25;
-const int arm1Dir = 2;
-const int arm1Trig = 0;
+const int arm1Dir = 28;
+const int arm1Trig = 27;
 const int arm1MicroStep = 8;
 const float arm1Multiplier = 26.064 * arm1MicroStep; // steps per degree <-- with ALL gearing included
 const float arm1Zero = 65.0;
 
 const float arm2Length = 125;//125
 const int arm2Switch = 27;
-const int arm2Dir = 10;
-const int arm2Trig = 6;
+const int arm2Dir = 11;
+const int arm2Trig = 10;
 const int arm2MicroStep = 8;
 const float arm2Multiplier = -12.3016 * arm2MicroStep; // steps per degree <-- with ALL gearing included
 
 const float arm3Length = 128.581;//128.581
 const int arm3Switch = 28;
-const int arm3Dir = 22;
-const int arm3Trig = 21;
+const int arm3Dir = 23;
+const int arm3Trig = 22;
 const int arm3MicroStep = 8;
 const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
 
@@ -134,10 +134,6 @@ float lawOfCos(float a, float b, float c) {
 }
 
 void setup() {
-	pinMode(baseSwitch, INPUT);
-	pinMode(arm1Switch, INPUT);
-	pinMode(arm2Switch, INPUT);
-	pinMode(arm3Switch, INPUT);
 	std::cout << "Pins Initialized" << std::endl;
 }
 
@@ -170,14 +166,18 @@ int main() {
 
 	base.setAcceleration(3);
 	base.setMaxVelocity(8.5);
+	
+	int arrayLength = 6;
 	        
+	float xCoord[arrayLength] = {300, 300, 320, 250, 280,0};
+	float yCoord[arrayLength] = {300, 200, 220, 300, 350, baseHeight + arm1Length + arm2Length + arm3Length - 5};
+	float rot[arrayLength] = {-45, 45, 0, 15, -65, 35};
+	for(int i = 0; i < arrayLength; i += 1) {	
+		float targetPositions[3] = {xCoord[i], yCoord[i], rot[i]};
 		
-	float targetPositions[2][3] = {{300, 300, 0}, {200, 400, 0}};
+		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPositions, threshold);
 	
-	for(int i = 0; i < 2; i += 1) {
-		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPositions[i], threshold);
-	
-		float baseAngle = targetPositions[i][2];
+		float baseAngle = targetPositions[2];
 		float arm1Angle = 90 - calculateAngle(p1);
 		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1] - basePosition[1], 2) + pow(p2[0] - basePosition[0], 2)));
 		float arm3Angle = 180 - lawOfCos(arm2Length, arm3Length, sqrt(pow(p3[1] - p1[1], 2) + pow(p3[0] - p1[0], 2)));
