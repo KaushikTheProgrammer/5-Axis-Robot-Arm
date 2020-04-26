@@ -86,7 +86,7 @@ int main() {
 	int inputAngle = 0;
     int desiredAxis = 0;
     Stepper axes[5] = {base, arm1, arm2, arm3, gripper};
-    float multipliers[4] = {baseMultiplier, arm1Multiplier, arm2Multiplier, arm3Multiplier}
+    float multipliers[4] = {baseMultiplier, arm1Multiplier, arm2Multiplier, arm3Multiplier};
 
 	while(true) {
 		std::cout << "Which axis would you like to control? ";
