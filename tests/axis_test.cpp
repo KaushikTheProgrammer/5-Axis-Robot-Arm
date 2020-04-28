@@ -59,6 +59,7 @@ void goToAngle(Stepper &axis, float desiredAngle, float axisMultiplier) {
 
 
 void setup() {
+	wiringPiSetup();
 	std::cout << "Pins Initialized" << std::endl;
 }
 
@@ -77,30 +78,10 @@ void configureAxes() {
 }
 
 int main() {
-	wiringPiSetup();
-	std::cout << "WiringPi Ready" << std::endl;
 	setup();
 	configureAxes();
 
-	
-	int inputAngle = 0;
-    int desiredAxis = 0;
-    Stepper axes[5] = {base, arm1, arm2, arm3, gripper};
-    float multipliers[4] = {baseMultiplier, arm1Multiplier, arm2Multiplier, arm3Multiplier};
-
-	while(true) {
-		std::cout << "Which axis would you like to control? ";
-        std::cin >> desiredAxis;
-
-        std::cout << "Input Angle: ";
-        std::cin >> inputAngle;
-
-        std::cout << "Creating thread" << std::endl;
-		std::thread axisThread(goToAngle, std::ref(axes[desiredAxis]), inputAngle, multipliers[desiredAxis]);
-		
-		axisThread.join();
-        std::cout << "Thread joined" << std::endl;
-	}
+	base.relStep(2000);
 		
 	return 0;
 }

@@ -1,5 +1,3 @@
 add_executable(forward_kinematics forward_kinematics.cpp)
-add_executable(axis_test axis_test.cpp)
 
 target_link_libraries(forward_kinematics PRIVATE Stepper pthread)
-target_link_libraries(axis_test PRIVATE Stepper pthread)
