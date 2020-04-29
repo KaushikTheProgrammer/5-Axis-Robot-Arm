@@ -8,8 +8,8 @@
 #define PI 3.14159265
 
 const int baseSwitch = 24;
-const int baseDir = 9;
-const int baseTrig = 8;
+const int baseDir = 15;
+const int baseTrig = 16;
 const int baseMicroStep = 8;
 const float baseMultiplier = -2.7778 * baseMicroStep; // steps per degree <-- with ALL gearing included
 const float baseHeight = 148.5;
@@ -37,8 +37,8 @@ const int arm3Trig = 22;
 const int arm3MicroStep = 8;
 const float arm3Multiplier = 2.46032 * arm3MicroStep; // steps per degree <-- with ALL gearing included
 
-const int gripperDir = 2;
-const int gripperTrig = 0;
+const int gripperDir = 26;
+const int gripperTrig = 27;
 const int gripperMicroStep = 8;
 
 Stepper base(baseDir, baseTrig, baseMicroStep);
@@ -81,7 +81,7 @@ int main() {
 	setup();
 	configureAxes();
 
-	base.relStep(2000);
+	gripper.relStep(2000);
 		
 	return 0;
 }
