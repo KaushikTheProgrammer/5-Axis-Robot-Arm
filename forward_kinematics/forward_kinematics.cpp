@@ -69,52 +69,54 @@ int main() {
 	
 	std::cout << "Welcome to Robot Arm Forward Kinematics Demo!" << std::endl;
 
-	arm1.setAcceleration(5);
-	arm1.setMaxVelocity(30);
+	gripper.relStep(2000);
+
+	// arm1.setAcceleration(5);
+	// arm1.setMaxVelocity(30);
 	
-	arm2.setAcceleration(3);
-	arm2.setMaxVelocity(9);
+	// arm2.setAcceleration(3);
+	// arm2.setMaxVelocity(9);
 
-	arm3.setAcceleration(0.5);
-	arm3.setMaxVelocity(1.6);
+	// arm3.setAcceleration(0.5);
+	// arm3.setMaxVelocity(1.6);
 
-	base.setAcceleration(3);
-	base.setMaxVelocity(8.5);
+	// base.setAcceleration(3);
+	// base.setMaxVelocity(8.5);
 	
-	int baseAngle = 0;
-	int arm1Angle = 0;
-	int arm2Angle = 0;
-	int arm3Angle = 0;
-	int gripperAngle = 0;
+	// int baseAngle = 0;
+	// int arm1Angle = 0;
+	// int arm2Angle = 0;
+	// int arm3Angle = 0;
+	// int gripperAngle = 0;
 
-	while(true) {
-		std::cout << "Base Angle: ";
-		std::cin >> baseAngle;
+	// while(true) {
+	// 	std::cout << "Base Angle: ";
+	// 	std::cin >> baseAngle;
 
-		std::cout << "Arm1 Angle: ";
-		std::cin >> arm1Angle;
+	// 	std::cout << "Arm1 Angle: ";
+	// 	std::cin >> arm1Angle;
 
-		std::cout << "Arm2 Angle: ";
-		std::cin >> arm2Angle;
+	// 	std::cout << "Arm2 Angle: ";
+	// 	std::cin >> arm2Angle;
 		
-		std::cout << "Arm3 Angle: ";
-		std::cin >> arm3Angle;
+	// 	std::cout << "Arm3 Angle: ";
+	// 	std::cin >> arm3Angle;
 
-		std::cout << "Gripper Angle: ";
-		std::cin >> gripperAngle;
+	// 	std::cout << "Gripper Angle: ";
+	// 	std::cin >> gripperAngle;
 
-		std::thread baseThread(goToAngle, std::ref(base), baseAngle, baseMultiplier);
-		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-		std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
-		//std::thread gripperThread(goToAngle, std::ref(gripper), gripperAngle, gripperMultiplier);
+	// 	std::thread baseThread(goToAngle, std::ref(base), baseAngle, baseMultiplier);
+	// 	std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
+	// 	std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
+	// 	std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
+	// 	//std::thread gripperThread(goToAngle, std::ref(gripper), gripperAngle, gripperMultiplier);
 		
-		baseThread.join();
-		arm1Thread.join();
-		arm2Thread.join();
-		arm3Thread.join();
-		//gripperThread.join();
-	}
+	// 	baseThread.join();
+	// 	arm1Thread.join();
+	// 	arm2Thread.join();
+	// 	arm3Thread.join();
+	// 	//gripperThread.join();
+	// }
 		
 	return 0;
 }

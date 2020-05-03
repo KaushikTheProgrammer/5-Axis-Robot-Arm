@@ -1,3 +1,4 @@
 add_executable(inverse_kinematics inverse_kinematics.cpp)
 
-target_link_libraries(inverse_kinematics PRIVATE Stepper vmath pthread)
+find_library(wiringPi_LIB wiringPi)
+target_link_libraries(inverse_kinematics PRIVATE ${wiringPi_LIB} Stepper vmath pthread)

@@ -7,10 +7,12 @@
 */
 
 #include <vector>
+#include <wiringPi.h>
 
 class Stepper {
 
 	public:
+        Stepper();
 		Stepper(const int DIRECTION_PIN, const int PULSE_PIN, const int MICRO_STEP_SIZE);
 		void pulse(bool direction, int pulseDelay);             // Take 1 step
 		void relStep(int STEPS);                          // Step a certain number of times
@@ -21,7 +23,8 @@ class Stepper {
 		void setCurrentPosition(int POSITION);
 		
 		int getCurrentPosition();
-		int getMaxSteps();	
+		int getMaxSteps();
+        int getMicroStepSize();
 
 	private:
 		std::vector<int> _allDelays;  							// Contains time intervals for every step in the routine

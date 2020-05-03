@@ -8,9 +8,9 @@
 
 
 #include "Stepper.hpp"
-#include <wiringPi.h>
 #include <cmath>
-#include <iostream>
+
+Stepper::Stepper() {}
 
 Stepper::Stepper(const int DIRECTION_PIN, const int PULSE_PIN, const int MICRO_STEP_SIZE) {
 	wiringPiSetup();
@@ -115,9 +115,6 @@ void Stepper::velStep(int STEPS, float REVPS) {
     }
 }
 
-
-
-
 /**
  * Move the stepper by 1 step in the given direction with the given delay
 */
@@ -175,6 +172,10 @@ int Stepper::getCurrentPosition() {
 */
 int Stepper::getMaxSteps() {
     return _maxSteps;
+}
+
+int Stepper::getMicroStepSize() {
+    return _microStepSize;
 }
 
 /**

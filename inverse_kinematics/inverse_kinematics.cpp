@@ -1,10 +1,11 @@
+#include "Stepper/Stepper.hpp"
 #include <wiringPi.h>
 #include <iostream>
 #include <thread>
 #include <cmath>
 #include <functional>
 #include "vmath/vmath.h"
-#include "Stepper/Stepper.hpp"
+
 
 #define PI 3.14159265
 
