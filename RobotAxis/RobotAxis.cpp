@@ -25,7 +25,7 @@ void RobotAxis::goToAngle(float DESIRED_ANGLE) {
 }
 
 void RobotAxis::goToAngle(float DESIRED_ANGLE, float OMEGA) {
-    rotate((DESIRED_ANGLE - _currentAngle), OMEGA));
+    rotate(DESIRED_ANGLE - _currentAngle, OMEGA);
     _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
 }
 

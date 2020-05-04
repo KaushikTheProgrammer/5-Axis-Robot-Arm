@@ -74,6 +74,9 @@ int main() {
     wiringPiSetup();
     baseJoint.setDirection(false);
     
+    baseJoint.goToAngle(50);
+    delay(500);
+    baseJoint.goToAngle(0);
 		
 	return 0;
 }
