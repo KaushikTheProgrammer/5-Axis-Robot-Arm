@@ -9,9 +9,10 @@
 #include "Stepper/Stepper.hpp"
 #include <wiringPi.h>
 
+
 class RobotAxis {
     public:
-        RobotAxis(Stepper &AXIS_MOTOR, const float STEP_ANGLE, const float AXIS_LENGTH);
+        RobotAxis(Stepper& AXIS_MOTOR, const float STEP_ANGLE, const float AXIS_LENGTH);
         void rotate(float DESIRED_ANGLE);               // Rotate DESIRED_ANGLE degrees
         void rotate(float DESIRED_ANGLE, float OMEGA);  // Rotate at constant angular velocity
         void goToAngle(float DESIRED_ANGLE);
@@ -23,9 +24,8 @@ class RobotAxis {
         float getStepAngle();                      // Returns the step angle for joint
 
 
-
 	private:
-        Stepper _axisMotor;                         // Motor responsible for axis
+        Stepper &_axisMotor;                         // Motor responsible for axis
         float _stepAngle;                           // Degrees per step including gearing
         float _axisLength;                          // Center distance length of physical axis
         float _currentAngle;                        // Axis angle with respect to previous axis vertical    

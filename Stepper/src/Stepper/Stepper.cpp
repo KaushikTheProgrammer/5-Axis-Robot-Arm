@@ -12,13 +12,15 @@
 
 Stepper::Stepper() {}
 
-Stepper::Stepper(const int DIRECTION_PIN, const int PULSE_PIN, const int MICRO_STEP_SIZE) {
-	wiringPiSetup();
-	
+Stepper::Stepper(const int DIRECTION_PIN, const int PULSE_PIN, const int MICRO_STEP_SIZE, float PROP_ACCEL) {	
+    wiringPiSetup();
     _directionPin = DIRECTION_PIN;
     _pulsePin = PULSE_PIN;
     
     _microStepSize = MICRO_STEP_SIZE;
+
+    _frqcy = 100;
+    _propAccel = PROP_ACCEL;
 
     _maxSteps = 200 * _microStepSize;
     _initVel *= _maxSteps;
@@ -96,7 +98,7 @@ void Stepper::relStep(const int STEPS) {
 
 /**
  * Moves the stepper at constant velocity
- * @param SPS speed of the stepper in steps/s 
+ * @param REVPS speed of the stepper in rev/s 
 */
 void Stepper::velStep(int STEPS, float REVPS) {
 	
@@ -158,6 +160,10 @@ void Stepper::setAcceleration(const float ACCELERATION) {
 */
 void Stepper::setMaxVelocity(const float MAX_VELOCITY) {
     _maxVel = MAX_VELOCITY * _maxSteps;
+}
+
+void Stepper::setMaxSteps(const int MAX_STEPS) {
+    _maxSteps = MAX_STEPS;
 }
 
 /**

@@ -1,9 +1,11 @@
 #include "RobotAxis.hpp"
+#include <iostream>
 
 RobotAxis::RobotAxis(Stepper &AXIS_MOTOR, const float STEP_ANGLE, const float AXIS_LENGTH) : _axisMotor(AXIS_MOTOR) {
-    _stepAngle = STEP_ANGLE * _axisMotor.getMicroStepSize();
+    _stepAngle = STEP_ANGLE;
     _axisLength = AXIS_LENGTH;
     _currentAngle = 0;
+    _axisMotor.setMaxSteps(360 / STEP_ANGLE);
 }
 
 void RobotAxis::rotate(float DESIRED_ANGLE) {
@@ -12,6 +14,7 @@ void RobotAxis::rotate(float DESIRED_ANGLE) {
 }
 
 void RobotAxis::rotate(float DESIRED_ANGLE, float OMEGA) {
+    std::cout << (int) (DESIRED_ANGLE / _stepAngle) << std::endl;
 	_axisMotor.velStep((int) DESIRED_ANGLE / _stepAngle, OMEGA);
     _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
 }
