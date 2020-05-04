@@ -68,16 +68,17 @@ RobotAxis gripperJoint = RobotAxis(gripperMotor, gripperStepAngle, gripperLength
 /*
  *  Positive Angle is CW
  *  Negative Angle is CCW
+ *  Directions based on top view and arm1Motor back view
  */
 
 int main() {
     wiringPiSetup();
     baseJoint.setDirection(false);
-    
-    baseJoint.goToAngle(45, 0.0625);
-    std::cout << baseJoint.getCurrentAngle() << std::endl;
-    baseJoint.goToAngle(0, 0.0625);
-    std::cout << baseJoint.getCurrentAngle() << std::endl;
+    arm1Joint.setDirection(true);
+    arm2Joint.setDirection(false);
+    arm3Joint.setDirection(true);
+    gripperJoint.setDirection(true);
+
 		
 	return 0;
 }
