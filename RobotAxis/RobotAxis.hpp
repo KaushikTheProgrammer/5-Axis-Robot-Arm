@@ -26,6 +26,7 @@ class RobotAxis {
 
 
 	private:
+        void updatePosition();
         Stepper &_axisMotor;                         // Motor responsible for axis
         float _stepAngle;                           // Degrees per step including gearing
         float _axisLength;                          // Center distance length of physical axis

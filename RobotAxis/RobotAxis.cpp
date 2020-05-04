@@ -11,22 +11,24 @@ RobotAxis::RobotAxis(Stepper &AXIS_MOTOR, const float STEP_ANGLE, const float AX
 
 void RobotAxis::rotate(float DESIRED_ANGLE) {
 	_axisMotor.relStep((_isPositive ? 1 : -1) * (int) DESIRED_ANGLE / _stepAngle);
-    _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
+    updatePosition();
 }
 
 void RobotAxis::rotate(float DESIRED_ANGLE, float OMEGA) {
-	_axisMotor.velStep((_isPositive ? 1 : -1) * (int) DESIRED_ANGLE / _stepAngle, OMEGA);
-    _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
+	_axisMotor.velStep((_isPositive ? 1 : -1) * ((int) DESIRED_ANGLE / _stepAngle), OMEGA);
+    updatePosition();
+}
+
+void RobotAxis::updatePosition() {
+    _currentAngle = _isPositive ? 1 : -1 * _axisMotor.getCurrentPosition() * _stepAngle;
 }
 
 void RobotAxis::goToAngle(float DESIRED_ANGLE) {
     rotate(DESIRED_ANGLE - _currentAngle);
-    _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
 }
 
 void RobotAxis::goToAngle(float DESIRED_ANGLE, float OMEGA) {
     rotate(DESIRED_ANGLE - _currentAngle, OMEGA);
-    _currentAngle = _axisMotor.getCurrentPosition() * _stepAngle;
 }
 
 void RobotAxis::setDirection(bool IS_POSITIVE) {

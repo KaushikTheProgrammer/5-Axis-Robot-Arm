@@ -74,9 +74,10 @@ int main() {
     wiringPiSetup();
     baseJoint.setDirection(false);
     
-    baseJoint.goToAngle(50);
-    delay(500);
-    baseJoint.goToAngle(0);
+    baseJoint.goToAngle(45, 0.0625);
+    std::cout << baseJoint.getCurrentAngle() << std::endl;
+    baseJoint.goToAngle(0, 0.0625);
+    std::cout << baseJoint.getCurrentAngle() << std::endl;
 		
 	return 0;
 }
