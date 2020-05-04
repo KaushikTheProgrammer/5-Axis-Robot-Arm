@@ -51,8 +51,6 @@ const int arm2Length = 125;
 const int arm3Length = 128.581;
 const int gripperLength = 50;
 
-
-
 // Motors for each axis
 Stepper baseMotor = Stepper(baseDir, baseTrig, baseMicroStep, 0.2);
 Stepper arm1Motor = Stepper(arm1Dir, arm1Trig, arm1MicroStep, 0.2);
@@ -67,11 +65,15 @@ RobotAxis arm2Joint = RobotAxis(arm2Motor, arm2StepAngle, arm2Length);
 RobotAxis arm3Joint = RobotAxis(arm3Motor, arm3StepAngle, arm3Length);
 RobotAxis gripperJoint = RobotAxis(gripperMotor, gripperStepAngle, gripperLength);
 
+/*
+ *  Positive Angle is CW
+ *  Negative Angle is CCW
+ */
+
 int main() {
     wiringPiSetup();
-
-    std::cout << gripperStepAngle << std::endl;
-    baseJoint.rotate(100, 0.03125);
+    baseJoint.setDirection(false);
+    
 		
 	return 0;
 }

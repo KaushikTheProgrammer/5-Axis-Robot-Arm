@@ -19,6 +19,7 @@ class RobotAxis {
         void goToAngle(float DESIRED_ANGLE, float OMEGA);
         void setMaxVelocity(float MAX_VELOCITY);
         void setAcceleration(float ACCELERATION);
+        void setDirection(bool IS_POSITIVE);
         float getCurrentAngle();
         float getJointLength();                    // Returns the length of the joint
         float getStepAngle();                      // Returns the step angle for joint
@@ -29,4 +30,5 @@ class RobotAxis {
         float _stepAngle;                           // Degrees per step including gearing
         float _axisLength;                          // Center distance length of physical axis
         float _currentAngle;                        // Axis angle with respect to previous axis vertical    
+        bool _isPositive;
 };
