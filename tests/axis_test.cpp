@@ -1,5 +1,10 @@
 #include "RobotAxis.hpp"
 #include <iostream>
+#include <ncurses.h>
+#include <thread>
+#include <atomic>
+#include <string>
+#include <chrono>
 
 /*
  * Stepper init:    (direction, trigger, microstepping)
@@ -16,6 +21,12 @@
  * Gripper scale   1:1 *             40:1 *             8 =   320:1
  * 
  * 1.8 * scale = step_angle
+ */
+
+ /*
+ *  Positive Angle is CW
+ *  Negative Angle is CCW
+ *  Directions based on top view and arm1Motor back view
  */
 
 
@@ -65,11 +76,14 @@ RobotAxis arm2Joint = RobotAxis(arm2Motor, arm2StepAngle, arm2Length);
 RobotAxis arm3Joint = RobotAxis(arm3Motor, arm3StepAngle, arm3Length);
 RobotAxis gripperJoint = RobotAxis(gripperMotor, gripperStepAngle, gripperLength);
 
-/*
- *  Positive Angle is CW
- *  Negative Angle is CCW
- *  Directions based on top view and arm1Motor back view
- */
+
+std::atomic<bool> isBaseComplete(true);
+
+void baseThreadRotate(float desiredAngle) {
+    isBaseComplete.store(false);
+    baseJoint.rotate(desiredAngle);
+    isBaseComplete.store(true);
+}
 
 int main() {
     wiringPiSetup();
@@ -79,6 +93,65 @@ int main() {
     arm3Joint.setDirection(true);
     gripperJoint.setDirection(true);
 
-		
+    float baseAngle = 0;
+    float arm1Angle = 0;
+    float arm2Angle = 0;
+    float arm3Angle = 0;
+    float gripperAngle = 0;
+    
+    initscr();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
+    scrollok(stdscr,TRUE);
+    
+    std::thread baseThread(baseThreadRotate, baseAngle);
+
+    int ch;
+    auto prevMillis = std::chrono::steady_clock::now();
+
+    while(true) {
+        auto currentMillis = std::chrono::steady_clock::now();
+        
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(currentMillis - prevMillis).count() >= 1) {
+            prevMillis = currentMillis;
+            
+            ch = getch();
+            switch(ch) {
+                case KEY_RIGHT:
+                    baseAngle = 5;
+                    break;
+                
+                case KEY_LEFT:
+                    baseAngle = -5;
+                    break;
+                
+                case KEY_UP:
+                    arm1Angle += 1;
+                    break;
+                
+                case KEY_DOWN:
+                    arm1Angle -= 1;
+                    break;
+                
+                case 119:
+                    arm2Angle += 1;
+                    break;
+                
+                case 115:
+                    arm2Angle -= 1;
+                    break;
+            }
+        }
+
+        printw("Target Base Angle %f  Actual Base Angle %f \n", baseAngle, baseJoint.getCurrentAngle());
+        refresh();
+
+        if(isBaseComplete.load()) {
+            baseThread.detach();
+            baseThread = std::thread(baseThreadRotate, baseAngle);
+        }
+    }
+
 	return 0;
 }
