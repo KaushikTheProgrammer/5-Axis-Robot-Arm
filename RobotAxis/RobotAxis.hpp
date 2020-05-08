@@ -14,7 +14,7 @@ class RobotAxis {
     public:
         RobotAxis(Stepper& AXIS_MOTOR, const float STEP_ANGLE, const float AXIS_LENGTH);
         void rotate(float DESIRED_ANGLE);               // Rotate DESIRED_ANGLE degrees
-        void rotate(float DESIRED_ANGLE, float OMEGA);  // Rotate at constant angular velocity
+        void rotate(float DESIRED_ANGLE, float OMEGA);  // Rotate at constant angular velocity to DESIRED_ANGLE
         void goToAngle(float DESIRED_ANGLE);
         void goToAngle(float DESIRED_ANGLE, float OMEGA);
         void setMaxVelocity(float MAX_VELOCITY);

@@ -9,6 +9,7 @@
 
 #include "Stepper.hpp"
 #include <cmath>
+#include <iostream>
 
 Stepper::Stepper() {}
 
