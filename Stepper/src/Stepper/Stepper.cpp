@@ -126,7 +126,7 @@ void Stepper::relStep(const int STEPS) {
             isForward = false;
         }
         
-        for(float stepDelay : _allDelays) {
+        for(double stepDelay : _allDelays) {
             pulse(isForward, stepDelay);
         }
 
@@ -140,7 +140,7 @@ void Stepper::relStep(const int STEPS) {
 */
 void Stepper::velStep(int STEPS, double REVPS) {
 	
-	float velDelay = 1000000 / (REVPS * _maxSteps);
+	double velDelay = 1000000 / (REVPS * _maxSteps);
     bool isForward = true;
     
     if(STEPS < 0) {
