@@ -5,6 +5,7 @@
 #include <atomic>
 #include <string>
 #include <chrono>
+#include <stdlib.h>
 
 /*
  * Stepper init:    (direction, trigger, microstepping)
@@ -63,11 +64,11 @@ const int arm3Length = 128.581;
 const int gripperLength = 50;
 
 // Motors for each axis
-Stepper baseMotor = Stepper(baseDir, baseTrig, baseMicroStep, 0.2);
-Stepper arm1Motor = Stepper(arm1Dir, arm1Trig, arm1MicroStep, 0.2);
-Stepper arm2Motor = Stepper(arm2Dir, arm2Trig, arm2MicroStep, 0.2);
-Stepper arm3Motor = Stepper(arm3Dir, arm3Trig, arm3MicroStep, 0.2);
-Stepper gripperMotor = Stepper(gripperDir, gripperTrig, gripperMicroStep, 0.2);
+Stepper baseMotor = Stepper(baseDir, baseTrig, baseMicroStep);
+Stepper arm1Motor = Stepper(arm1Dir, arm1Trig, arm1MicroStep);
+Stepper arm2Motor = Stepper(arm2Dir, arm2Trig, arm2MicroStep);
+Stepper arm3Motor = Stepper(arm3Dir, arm3Trig, arm3MicroStep);
+Stepper gripperMotor = Stepper(gripperDir, gripperTrig, gripperMicroStep);
 
 // Objects representig each axis
 RobotAxis baseJoint = RobotAxis(baseMotor, baseStepAngle, baseLength);
@@ -77,13 +78,11 @@ RobotAxis arm3Joint = RobotAxis(arm3Motor, arm3StepAngle, arm3Length);
 RobotAxis gripperJoint = RobotAxis(gripperMotor, gripperStepAngle, gripperLength);
 
 
-std::atomic<bool> isBaseComplete(true);
-
-void baseThreadRotate(float desiredAngle) {
-    isBaseComplete.store(false);
-    baseJoint.rotate(desiredAngle);
-    isBaseComplete.store(true);
-}
+// void baseThreadRotate(float desiredAngle) {
+//     isBaseComplete.store(false);
+//     baseJoint.rotate(desiredAngle);
+//     isBaseComplete.store(true);
+// }
 
 int main() {
     wiringPiSetup();
@@ -93,78 +92,141 @@ int main() {
     arm3Joint.setDirection(true);
     gripperJoint.setDirection(true);
 
-    float rps = 0.5;
-    float delayMicro = 1000000 / (rps * 8000);
+    // float rps = 0.5;
+    // float delayMicro = 1000000 / (rps * 8000);
     
-    auto prevMicros = std::chrono::steady_clock::now();;
-    while(true) {
-        auto currentMicros = std::chrono::steady_clock::now();
-        if(std::chrono::duration_cast<std::chrono::microseconds>(currentMicros - prevMicros).count() >= delayMicro) {
-            currentMicros = std::chrono::steady_clock::now();
-            baseJoint.rotate(1, rps);
-            prevMicros = currentMicros;
-        }
-    }
-
-    // float baseAngle = 0;
-    // float arm1Angle = 0;
-    // float arm2Angle = 0;
-    // float arm3Angle = 0;
-    // float gripperAngle = 0;
-    
-    // initscr();
-    // noecho();
-    // cbreak();
-    // keypad(stdscr, TRUE);
-    // scrollok(stdscr,TRUE);
-    
-    // std::thread baseThread(baseThreadRotate, baseAngle);
-
-    // int ch;
     // auto prevMillis = std::chrono::steady_clock::now();
-
     // while(true) {
     //     auto currentMillis = std::chrono::steady_clock::now();
-        
-    //     if(std::chrono::duration_cast<std::chrono::milliseconds>(currentMillis - prevMillis).count() >= 1) {
+    //     if(std::chrono::duration_cast<std::chrono::microseconds>(currentMillis - prevMillis).count() >= delayMicro) {
+    //         currentMillis = std::chrono::steady_clock::now();
+    //         baseJoint.rotate(1, rps);
     //         prevMillis = currentMillis;
-            
-    //         ch = getch();
-    //         switch(ch) {
-    //             case KEY_RIGHT:
-    //                 baseAngle = 5;
-    //                 break;
-                
-    //             case KEY_LEFT:
-    //                 baseAngle = -5;
-    //                 break;
-                
-    //             case KEY_UP:
-    //                 arm1Angle += 1;
-    //                 break;
-                
-    //             case KEY_DOWN:
-    //                 arm1Angle -= 1;
-    //                 break;
-                
-    //             case 119:
-    //                 arm2Angle += 1;
-    //                 break;
-                
-    //             case 115:
-    //                 arm2Angle -= 1;
-    //                 break;
-    //         }
-    //     }
-
-    //     printw("Target Base Angle %f  Actual Base Angle %f \n", baseAngle, baseJoint.getCurrentAngle());
-    //     refresh();
-
-    //     if(isBaseComplete.load()) {
-    //         baseThread.detach();
-    //         baseThread = std::thread(baseThreadRotate, baseAngle);
     //     }
     // }
 
+    float baseAngle = 0;
+    float arm1Angle = 0;
+    float arm2Angle = 0;
+    float arm3Angle = 0;
+    float gripperAngle = 0;
+    
+    initscr();
+    noecho();
+    cbreak();
+    keypad(stdscr, TRUE);
+    scrollok(stdscr,TRUE);
+    nodelay(stdscr, TRUE);
+
+    int ch;
+   
+    while(true) {
+        ch = getch();
+        switch(ch) {
+            case KEY_RIGHT:
+                baseAngle += 1;
+                break;
+            
+            case KEY_LEFT:
+                baseAngle -= 1;
+                break;
+            
+            case KEY_UP:
+                arm1Angle += 1;
+                break;
+            
+            case KEY_DOWN:
+                arm1Angle -= 1;
+                break;
+            
+            case 119:
+                arm2Angle += 1;
+                break;
+            
+            case 115:
+                arm2Angle -= 1;
+                break;
+            
+            case 100:
+                arm3Angle += 1;
+                break;
+            
+            case 97:
+                arm3Angle -= 1;
+                break;
+            
+            case 101:
+                gripperAngle += 1;
+                break;
+            
+            case 113:
+                gripperAngle -= 1;
+                break;
+            
+            case ERR:
+                break;
+
+            case 27:
+                endwin();
+                exit(EXIT_SUCCESS);
+                break;
+        }
+        baseJoint.goToAngle(baseAngle, 0.1);
+        arm1Joint.goToAngle(arm1Angle, 0.05);
+        arm2Joint.goToAngle(arm2Angle, 0.05);
+        arm3Joint.goToAngle(arm3Angle, 0.09);
+        gripperJoint.goToAngle(gripperAngle, 0.1);
+        printw("baseAngle %f arm1Angle %f %i %i \n", baseAngle, baseJoint.getCurrentAngle(), baseMotor.getCurrentPosition());
+        refresh();
+    }
 	return 0;
 }
+
+        // currentMillis = std::chrono::steady_clock::now();
+        // if(std::chrono::duration_cast<std::chrono::microseconds>(currentMillis - prevMillis).count() >= 100) {
+        //     prevMillis = currentMillis;
+        //     ch = getch();
+        //     switch(ch) {
+        //         case KEY_RIGHT:
+        //             baseAngle += 1;
+        //             break;
+                
+        //         case KEY_LEFT:
+        //             baseAngle -= 1;
+        //             break;
+                
+        //         case KEY_UP:
+        //             arm1Angle += 1;
+        //             break;
+                
+        //         case KEY_DOWN:
+        //             arm1Angle -= 1;
+        //             break;
+                
+        //         case 119:
+        //             arm2Angle += 1;
+        //             break;
+                
+        //         case 115:
+        //             arm2Angle -= 1;
+        //             break;
+                
+        //         case ERR:
+        //             break;
+
+        //         case 27:
+        //             endwin();
+        //             exit(EXIT_SUCCESS);
+        //             break;
+        //     }
+        // }
+        // auto before = std::chrono::steady_clock::now();
+        // baseJoint.goToAngle(baseAngle, 0.1);
+        // auto after = std::chrono::steady_clock::now();
+        // float elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(after - before).count();
+        // if(elapsed != 0) {
+        //     printw("Time taken %f \n", elapsed);
+        //     refresh();
+        // }
+        
+    // }

@@ -3,7 +3,7 @@ project(RobotArm VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 11)
 add_subdirectory(Stepper)
-add_subdirectory(vmath)
-add_subdirectory(RobotAxis)
 add_subdirectory(tests)
+add_subdirectory(RobotAxis)
+
 
