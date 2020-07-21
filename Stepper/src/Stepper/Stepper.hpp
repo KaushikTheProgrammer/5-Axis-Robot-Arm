@@ -23,14 +23,14 @@ class Stepper {
         void setMaxSteps(const int MAX_STEPS);                  // Set maximum motor steps
 		void setAccelThreshold(int STEPS);                      // Set minimum step count for acceleration
         void setMinVelocity(double REVPS);                      // Set min velocity in rev/s
-		int getCurrentPosition();                               // Return current motor position
+		double getMaxVelocity();
+        int getCurrentPosition();                               // Return current motor position
 		int getMaxSteps();                                      // Return max motor steps
         int getMicroStepSize();                                 // Return micro step size
-        void calculateParameters(int STEPS);                    // Calculate time intervals for each step
 
 	private:
 		std::vector<double> _allDelays;  						// Contains time intervals for every step in the routine
-        // void calculateParameters(int STEPS);                    // Calculate time intervals for each step
+        void calculateParameters(int STEPS);                    // Calculate time intervals for each step
 		double _maxVel;        	                                // Max velocity in rev/s
 		double _accel;	                                        // Max acceleration in rev/s^2
 		double _minVel;                                         // Min Velocity in rev/s

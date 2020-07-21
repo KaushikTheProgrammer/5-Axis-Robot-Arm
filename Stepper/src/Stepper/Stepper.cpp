@@ -71,14 +71,14 @@ void Stepper::calculateParameters(int STEPS) {
             _allDelays.push_back(_allDelays[i]);
         }
         
-    } else {
+    } 
+    
+    // Short movement at min speed
+    else {
         double _minVelDelay = (1 / _minVel) * 1000000;
         for(int stepNumber = 0; stepNumber < STEPS; stepNumber += 1) {
             _allDelays.push_back(_minVelDelay);      
         }
-    }
-    for (int i = 0; i < _allDelays.size(); i += 1) {
-        std::cout << i + 1 << " " << _allDelays[i] << std::endl;
     }
 }
 
@@ -91,9 +91,10 @@ void Stepper::relStep(const int STEPS) {
         calculateParameters(STEPS);	// Calculate delays for every step
 
         bool isForward = STEPS < 0 ? false : true;
-        
+        int i  = 0;
         for(double stepDelay : _allDelays) {
             pulse(isForward, stepDelay);
+            i += 1;
         }
 
         std::vector<double>().swap(_allDelays); // Remove all delays for this routine and force a reallocation
@@ -105,6 +106,7 @@ void Stepper::relStep(const int STEPS) {
  * @param REVPS speed of the stepper in rev/s 
 */
 void Stepper::velStep(int STEPS, double REVPS) {
+    if(REVPS * _maxSteps > _maxVel) { REVPS = _maxVel / _maxSteps;}
 	double velDelay = 1000000 / (REVPS * _maxSteps);
     
     bool isForward = STEPS < 0 ? false : true;
@@ -168,10 +170,11 @@ void Stepper::setAcceleration(const double ACCELERATION) {
 }
 
 void Stepper::setMaxSteps(const int MAX_STEPS) {
+    _maxVel = (_maxVel / _maxSteps) * MAX_STEPS;
+    _minVel = (_minVel / _maxSteps) * MAX_STEPS;
+    _accel = (_accel / _maxSteps) * MAX_STEPS;  
     _maxSteps = MAX_STEPS;
-    _maxVel = _maxVel * _maxSteps;
-    _minVel = _minVel * _maxSteps;
-    _accel = _accel * _maxSteps;    
+    // std::cout << _maxSteps << std::endl;
 }
 
 /**
@@ -202,4 +205,8 @@ int Stepper::getMaxSteps() {
 
 int Stepper::getMicroStepSize() {
     return _microStepSize;
+}
+
+double Stepper::getMaxVelocity() {
+    return _maxVel / _maxSteps;
 }

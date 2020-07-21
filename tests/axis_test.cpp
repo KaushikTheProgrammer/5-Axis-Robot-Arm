@@ -16,7 +16,7 @@
  *         Motor Gearbox * External Gearing * Microstepping
  *
  * Base scale      5:1 *              1:1 *             8 =    40:1
- * Arm1 scale     19:1 *           1.45:1 *             8 = 220.4:1
+ * Arm1 scale     19.19:1 *           1.45:1 *             8 = 222.604:1
  * Arm2 scale      5:1 *              4:1 *             8 =   160:1
  * Arm3 scale      1:1 *              4:1 *             8 =    32:1
  * Gripper scale   1:1 *             40:1 *             8 =   320:1
@@ -40,7 +40,7 @@ const float gripperMicroStep = 8;
 
 // Step angle for each motor
 const float baseStepAngle = 0.045;
-const float arm1StepAngle = 0.00817;
+const float arm1StepAngle = 0.00809;
 const float arm2StepAngle = 0.01125;
 const float arm3StepAngle = 0.0563;
 const float gripperStepAngle = 0.00563;
@@ -78,12 +78,6 @@ RobotAxis arm3Joint = RobotAxis(arm3Motor, arm3StepAngle, arm3Length);
 RobotAxis gripperJoint = RobotAxis(gripperMotor, gripperStepAngle, gripperLength);
 
 
-// void baseThreadRotate(float desiredAngle) {
-//     isBaseComplete.store(false);
-//     baseJoint.rotate(desiredAngle);
-//     isBaseComplete.store(true);
-// }
-
 int main() {
     wiringPiSetup();
     baseJoint.setDirection(false);
@@ -92,18 +86,6 @@ int main() {
     arm3Joint.setDirection(true);
     gripperJoint.setDirection(true);
 
-    // float rps = 0.5;
-    // float delayMicro = 1000000 / (rps * 8000);
-    
-    // auto prevMillis = std::chrono::steady_clock::now();
-    // while(true) {
-    //     auto currentMillis = std::chrono::steady_clock::now();
-    //     if(std::chrono::duration_cast<std::chrono::microseconds>(currentMillis - prevMillis).count() >= delayMicro) {
-    //         currentMillis = std::chrono::steady_clock::now();
-    //         baseJoint.rotate(1, rps);
-    //         prevMillis = currentMillis;
-    //     }
-    // }
 
     float baseAngle = 0;
     float arm1Angle = 0;
@@ -181,52 +163,3 @@ int main() {
     }
 	return 0;
 }
-
-        // currentMillis = std::chrono::steady_clock::now();
-        // if(std::chrono::duration_cast<std::chrono::microseconds>(currentMillis - prevMillis).count() >= 100) {
-        //     prevMillis = currentMillis;
-        //     ch = getch();
-        //     switch(ch) {
-        //         case KEY_RIGHT:
-        //             baseAngle += 1;
-        //             break;
-                
-        //         case KEY_LEFT:
-        //             baseAngle -= 1;
-        //             break;
-                
-        //         case KEY_UP:
-        //             arm1Angle += 1;
-        //             break;
-                
-        //         case KEY_DOWN:
-        //             arm1Angle -= 1;
-        //             break;
-                
-        //         case 119:
-        //             arm2Angle += 1;
-        //             break;
-                
-        //         case 115:
-        //             arm2Angle -= 1;
-        //             break;
-                
-        //         case ERR:
-        //             break;
-
-        //         case 27:
-        //             endwin();
-        //             exit(EXIT_SUCCESS);
-        //             break;
-        //     }
-        // }
-        // auto before = std::chrono::steady_clock::now();
-        // baseJoint.goToAngle(baseAngle, 0.1);
-        // auto after = std::chrono::steady_clock::now();
-        // float elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(after - before).count();
-        // if(elapsed != 0) {
-        //     printw("Time taken %f \n", elapsed);
-        //     refresh();
-        // }
-        
-    // }
