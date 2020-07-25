@@ -6,8 +6,6 @@
 #include <string>
 #include <algorithm>
 
-#define PI 3.14159265
-
 /*
  * Stepper init:    (direction, trigger, microstepping)
  * RobotAxis init:  (&Stepper, step_angle, axis_length)
@@ -31,6 +29,7 @@
  *  Directions based on top view and arm1Motor back view
  */
 
+#define PI 3.14159265
 
 // Microstepping modes for each motor
 const float baseMicroStep = 8;
