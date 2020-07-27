@@ -3,7 +3,6 @@
 #include <iostream>
 #include <thread>
 #include <cmath>
-#include <functional>
 #include "vmath/vmath.h"
 
 
@@ -24,11 +23,6 @@
  * 1.8 * scale = step_angle
  */
 
- /*
- *  Positive Angle is CW
- *  Negative Angle is CCW
- *  Directions based on top view and arm1Motor back view
- */
 
 #define PI 3.14159265
 
@@ -40,11 +34,11 @@ const float arm3MicroStep = 8;
 const float gripperMicroStep = 8;
 
 // Step angle for each motor
-const float baseStepAngle = 0.045;
-const float arm1StepAngle = 0.00477;
-const float arm2StepAngle = 0.01125;
-const float arm3StepAngle = 0.0563;
-const float gripperStepAngle = 0.00563;
+const double baseStepAngle = 0.045;
+const double arm1StepAngle = 0.00477;
+const double arm2StepAngle = 0.01125;
+const double arm3StepAngle = 0.0563;
+const double gripperStepAngle = 0.00563;
 
 // Control pins for each motor
 const int baseDir = 15;
@@ -58,6 +52,7 @@ const int arm2Trig = 6;
 const int arm3Trig = 11;
 const int gripperTrig = 27;
 
+// Arm Constants
 const int baseHeight = 148.5;
 const int arm1Length = 145;
 const int arm2Length = 125;
@@ -79,11 +74,17 @@ RobotAxis arm3Axis = RobotAxis(arm3Motor, arm3StepAngle, arm3Length);
 RobotAxis gripperAxis = RobotAxis(gripperMotor, gripperStepAngle, gripperLength);
 
 
+void showJoint(float joint[]) {
+    std::cout << "(" << joint[0] << ","<< joint[1] << ")" << std::endl;
+}
+
+
 /*
  * Move and reorient joint endpoint to a new target point
  */
 void moveJoint(float jointLength, float start[], float end[], const float target[]) {
-    // Displacement from joint end point to target
+    
+    // Move joint end point to target
     Vector2f deltaVector = Vector2f(target[0] - end[0], target[1] - end[1]);
     end[0] += deltaVector.x;
     end[1] += deltaVector.y;
@@ -101,21 +102,18 @@ void moveJoint(float jointLength, float start[], float end[], const float target
     start[1] = end[1] - deltaVector.y;
 }
 
-void showJoint(float joint[]) {
-    std::cout << "(" << joint[0] << ","<< joint[1] << ")" << std::endl;
-}
-
 /*
  * Iteratively moves the arm to the target point 
- * Inputs: Each joints starting coordinates
+ * Inputs: The starting coordinates of joint endpoints
+ * start[] is the constant home position of the arm
  */
-void fabrik(const float start[], float basePos[], float joint1Pos[], float joint2Pos[], float joint3Pos[], 
-            const float target[], float threshold) {
+bool fabrik(const float start[], float basePos[], float joint1Pos[], float joint2Pos[], float joint3Pos[], 
+            const float target[], float threshold, bool debug = 0) {
     
     // Check if target is reachable
     float totalDist = sqrt(pow(start[0] - target[0], 2) + pow(start[1] - target[1], 2));
     
-    if(totalDist < (arm1Length + arm2Length + arm3Length)) {
+    if(totalDist <= (arm1Length + arm2Length + arm3Length)) {
         
         // Inital distance from the target
         float remainingDist = sqrt(pow(joint2Pos[0] - target[0], 2) + pow(joint2Pos[1] - target[1], 2));
@@ -142,41 +140,67 @@ void fabrik(const float start[], float basePos[], float joint1Pos[], float joint
             moveJoint(arm1Length, joint1Pos, basePos, start);
             moveJoint(arm2Length, joint2Pos, joint1Pos, joint1Pos);
             moveJoint(arm3Length, joint3Pos, joint2Pos, joint2Pos);
-            
-            showJoint(basePos);
-            showJoint(joint1Pos);
-            showJoint(joint2Pos);
-            showJoint(joint3Pos);
-            
+
             // Calculate remaining distance
             remainingDist = sqrt(pow(joint3Pos[0] - target[0], 2) + pow(joint3Pos[1] - target[1], 2));
-            std::cout << "Remaining Distance: " << remainingDist << std::endl;
+            
+            if (debug) {
+                showJoint(basePos);
+                showJoint(joint1Pos);
+                showJoint(joint2Pos);
+                showJoint(joint3Pos);
+                std::cout << "Remaining Distance: " << remainingDist << std::endl;
+            }   
         }
+        return true;
     } else {
         std::cout << "Unreachable target: " << totalDist << " > " <<  (arm1Length + arm2Length + arm3Length) << std::endl;
+        return false;
     }
 }
 
 
-
-float calculateAngle(float joint[]) {
-    return std::atan((joint[1] - baseHeight) / joint[0]) * 180 / PI;
+float calculateAngle(float jointStart[], float jointEnd[]) {
+    float angle = std::atan((jointEnd[1] - jointStart[1]) / (jointEnd[0] - jointStart[0])) * 180 / PI;
+    if (angle < 0) {
+        angle = angle + 180;
+    }
+    return angle;
 }
 
-float lawOfCos(float a, float b, float c) {
-    return std::acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2*a*b)) * 180 / PI;
+float lawOfCos(float l1, float l2, float a[], float b[], float c[]) {
+    float cSide = sqrt(pow(c[0] - a[0], 2) + pow(c[1] - a[1], 2));
+    // std::cout << cSide << std::endl;
+    // std::cout << "angle" <<  ((pow(cSide, 2) - pow(l1, 2) - pow(l2, 2)) / (-2 * l1 * l2)) << std::endl;
+    float theta = 180 - (acos( (pow(cSide, 2) - pow(l1, 2) - pow(l2, 2)) / (-2 * l1 * l2) ) * 180 / PI);
+    
+    if( c[1] > ((b[1] - a[1] / b[0] - a[0]) * (c[0] - b[0]) + b[1]) ) {
+        theta = -theta;
+    }
+    
+    return theta;
 }
 
+void rotateAxis(RobotAxis& axis, float angle) {
+    axis.goToAngle(angle);
+}
 
-int main() {
+int main(int argc, char** argv) {
 	wiringPiSetup();
 	std::cout << "WiringPi Ready" << std::endl;
 	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
-    
+
+    arm2Axis.setDirection(false);
+
     float jointPositions[4][2] = { {0, baseHeight}, 
                                    {0, baseHeight + arm1Length}, 
                                    {0, baseHeight + arm1Length + arm2Length}, 
                                    {0, baseHeight + arm1Length + arm2Length + arm3Length} };
+    
+    showJoint(jointPositions[0]);
+    showJoint(jointPositions[1]);
+    showJoint(jointPositions[2]);
+    showJoint(jointPositions[3]);
     
     const float start[2] = {0, baseHeight};
     
@@ -189,81 +213,32 @@ int main() {
         std::cout << "Y coordinate: ";
         std::cin >> target[1];
         
-        fabrik(start, jointPositions[0], jointPositions[1], jointPositions[2], jointPositions[3], target, 0.001);
+        fabrik(start, jointPositions[0], jointPositions[1], jointPositions[2], jointPositions[3], target, 0.001, 0);
+        showJoint(jointPositions[0]);
+        showJoint(jointPositions[1]);
+        showJoint(jointPositions[2]);
+        showJoint(jointPositions[3]);
+        
+        float arm1Angle = 90 - calculateAngle(jointPositions[0], jointPositions[1]);
+        float arm2Angle = lawOfCos(arm1Length, arm2Length, jointPositions[0], jointPositions[1], jointPositions[2]);
+        float arm3Angle = lawOfCos(arm2Length, arm3Length, jointPositions[1], jointPositions[2], jointPositions[3]);
+        
+        std::cout << arm1Angle << std::endl;
+        std::cout << arm2Angle << std::endl;
+        std::cout << arm3Angle << std::endl;
+
+        std::thread arm1Thread(rotateAxis, std::ref(arm1Axis), arm1Angle);
+        std::thread arm2Thread(rotateAxis, std::ref(arm2Axis), arm2Angle);
+        std::thread arm3Thread(rotateAxis, std::ref(arm3Axis), arm3Angle);
+        
+        arm1Thread.join();
+        arm2Thread.join();
+        arm3Thread.join();
+
+
+        arm1Axis.goToAngle(arm1Angle);
+        arm2Axis.goToAngle(arm2Angle);
+        arm3Axis.goToAngle(arm3Angle);
     }
-
-    
-    // Vector2f arm1Vector = Vector2f(jointPositions[1][1] - jointPositions[0][0], jointPositions[1][1] - jointPositions[0][1]);
-    // Vector2f arm2Vector = Vector2f(jointPositions[2][2] - jointPositions[1][1], jointPositions[2][1] - jointPositions[1][1]);
-    // Vector2f arm3Vector = Vector2f(jointPositions[3][3] - jointPositions[0][2], jointPositions[3][1] - jointPositions[2][1]);
-
-
-
 	return 0;
 }
-
-
-// const float basePosition[] = {0, baseHeight};
-
-//     float threshold = 0.01;
-//     float p0[] = {0, baseHeight};
-//     float p1[] = {0, baseHeight + arm1Length};
-//     float p2[] = {0, baseHeight + arm1Length + arm2Length};
-//     float p3[] = {0, baseHeight + arm1Length + arm2Length + arm3Length};
-//     const Vector2f j1 = Vector2f(p1[0] - basePosition[0], p1[1] - basePosition[1]);
-//     const Vector2f j2 = Vector2f(p2[0] - p1[0], p2[1] - p1[1]);
-//     const Vector2f j3 = Vector2f(p3[0] - p2[0], p3[1] - p2[1]);
-
-//     arm1.setAcceleration(5);
-// 	arm1.setMaxVelocity(30);
-	
-// 	arm2.setAcceleration(3);
-// 	arm2.setMaxVelocity(9);
-
-// 	arm3.setAcceleration(0.5);
-// 	arm3.setMaxVelocity(1.6);
-
-// 	base.setAcceleration(3);
-// 	base.setMaxVelocity(8.5);
-	
-// 	int arrayLength = 6;
-	        
-// 	float xCoord[arrayLength] = {300, 300, 320, 250, 280,0};
-// 	float yCoord[arrayLength] = {300, 200, 220, 300, 350, baseHeight + arm1Length + arm2Length + arm3Length - 5};
-// 	float rot[arrayLength] = {-45, 45, 0, 15, -65, 35};
-// 	for(int i = 0; i < arrayLength; i += 1) {	
-// 		float targetPositions[3] = {xCoord[i], yCoord[i], rot[i]};
-		
-// 		fabrik(j1, j2, j3, basePosition, p0, p1, p2, p3, targetPositions, threshold);
-	
-// 		float baseAngle = targetPositions[2];
-// 		float arm1Angle = 90 - calculateAngle(p1);
-// 		float arm2Angle = 180 - lawOfCos(arm1Length, arm2Length, sqrt(pow(p2[1] - basePosition[1], 2) + pow(p2[0] - basePosition[0], 2)));
-// 		float arm3Angle = 180 - lawOfCos(arm2Length, arm3Length, sqrt(pow(p3[1] - p1[1], 2) + pow(p3[0] - p1[0], 2)));
-		
-// 		std::cout << "FinalAngles" << std::endl;
-// 		std::cout << arm1Angle << std::endl;
-// 		std::cout << arm2Angle << std::endl;
-// 		std::cout << arm3Angle << std::endl;
-
-// 		showJoint(p1);
-// 		showJoint(p2);
-// 		showJoint(p3); 
-		
-// 		std::thread baseThread(goToAngle, std::ref(base), baseAngle, baseMultiplier);
-// 		std::thread arm1Thread(goToAngle, std::ref(arm1), arm1Angle, arm1Multiplier);
-// 		std::thread arm2Thread(goToAngle, std::ref(arm2), arm2Angle, arm2Multiplier);
-// 		std::thread arm3Thread(goToAngle, std::ref(arm3), arm3Angle, arm3Multiplier);
-		
-// 		baseThread.join();
-// 		arm1Thread.join();
-// 		arm2Thread.join();
-// 		arm3Thread.join();
-// 	}
-	
-
-
-// 	std::cout << "Arm1 Position " << stepToAngle(arm1.getCurrentPosition(), arm1Multiplier) << std::endl;
-// 	std::cout << "Arm2 Position " << stepToAngle(arm2.getCurrentPosition(), arm2Multiplier) << std::endl;
-// 	std::cout << "Arm3 Position " << stepToAngle(arm3.getCurrentPosition(), arm3Multiplier) << std::endl;
-	
