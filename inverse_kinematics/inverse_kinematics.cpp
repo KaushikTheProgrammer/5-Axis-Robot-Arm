@@ -162,7 +162,7 @@ bool fabrik(const float start[], float basePos[], float joint1Pos[], float joint
 
 float calculateAngle(float jointStart[], float jointEnd[]) {
     float angle = std::atan((jointEnd[1] - jointStart[1]) / (jointEnd[0] - jointStart[0])) * 180 / PI;
-    if (angle < 0) {
+    if (jointEnd[0] - jointStart[0] < 0) {
         angle = angle + 180;
     }
     return angle;
@@ -170,11 +170,12 @@ float calculateAngle(float jointStart[], float jointEnd[]) {
 
 float lawOfCos(float l1, float l2, float a[], float b[], float c[]) {
     float cSide = sqrt(pow(c[0] - a[0], 2) + pow(c[1] - a[1], 2));
-    // std::cout << cSide << std::endl;
-    // std::cout << "angle" <<  ((pow(cSide, 2) - pow(l1, 2) - pow(l2, 2)) / (-2 * l1 * l2)) << std::endl;
-    float theta = 180 - (acos( (pow(cSide, 2) - pow(l1, 2) - pow(l2, 2)) / (-2 * l1 * l2) ) * 180 / PI);
     
+    float theta = 180 - (acos( (pow(cSide, 2) - pow(l1, 2) - pow(l2, 2)) / (-2 * l1 * l2) ) * 180 / PI);
+    std::cout << "c: " << cSide << std::endl;
+    std::cout << "acos: " << 180 - theta << std::endl;
     if( c[1] > ((b[1] - a[1] / b[0] - a[0]) * (c[0] - b[0]) + b[1]) ) {
+        std::cout << "switiching angle" << std::endl;
         theta = -theta;
     }
     
@@ -190,7 +191,19 @@ int main(int argc, char** argv) {
 	std::cout << "WiringPi Ready" << std::endl;
 	std::cout << "Welcome to Robot Arm Inverse Kinematics Demo!" << std::endl;
 
+    arm3Axis.setAcceleration(3);
+    arm3Axis.setMaxVelocity(5);
+
     arm2Axis.setDirection(false);
+    arm2Axis.setMaxVelocity(0.15);
+
+    arm1Axis.setMaxVelocity(0.1);
+    
+    // float pos[3] = {-40, 40, 0};
+
+    // for(float p : pos) {
+    //     arm1Axis.goToAngle(p);
+    // }
 
     float jointPositions[4][2] = { {0, baseHeight}, 
                                    {0, baseHeight + arm1Length}, 
@@ -202,6 +215,8 @@ int main(int argc, char** argv) {
     showJoint(jointPositions[2]);
     showJoint(jointPositions[3]);
     
+    // NEED TO FIX STARTING POINT
+
     const float start[2] = {0, baseHeight};
     
     while(true) {
@@ -212,7 +227,14 @@ int main(int argc, char** argv) {
 
         std::cout << "Y coordinate: ";
         std::cin >> target[1];
-        
+
+        // for(int y = 546; y >= -249; y -= 1) {
+        //     int lBound = -sqrt(158006.25 - pow(y, 2));
+        //     for(int x = lBound; x <= -lBound; x += 1) {
+
+        //     }
+        // }
+
         fabrik(start, jointPositions[0], jointPositions[1], jointPositions[2], jointPositions[3], target, 0.001, 0);
         showJoint(jointPositions[0]);
         showJoint(jointPositions[1]);
@@ -226,6 +248,7 @@ int main(int argc, char** argv) {
         std::cout << arm1Angle << std::endl;
         std::cout << arm2Angle << std::endl;
         std::cout << arm3Angle << std::endl;
+        
 
         std::thread arm1Thread(rotateAxis, std::ref(arm1Axis), arm1Angle);
         std::thread arm2Thread(rotateAxis, std::ref(arm2Axis), arm2Angle);

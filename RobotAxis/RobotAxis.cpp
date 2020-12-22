@@ -6,6 +6,7 @@ RobotAxis::RobotAxis(Stepper &AXIS_MOTOR, const double STEP_ANGLE, const double 
     _minAngle = -90;
     _stepAngle = STEP_ANGLE;
     _axisLength = AXIS_LENGTH;
+    _axisLength = AXIS_LENGTH;
     _currentAngle = 0;
     _isPositive = true;
     _axisMotor.setMaxSteps(360 / STEP_ANGLE);
@@ -36,13 +37,6 @@ void RobotAxis::updatePosition() {
     _currentAngle = (_isPositive ? 1 : -1) * _axisMotor.getCurrentPosition() * _stepAngle;
 }
 
-
-
-// void RobotAxis::goToAngle(double DESIRED_ANGLE, double OMEGA) {
-//     if(DESIRED_ANGLE > _maxAngle) { DESIRED_ANGLE = _maxAngle; }
-//     else if(DESIRED_ANGLE < _minAngle) { DESIRED_ANGLE = _minAngle; }
-//     rotate(DESIRED_ANGLE - _currentAngle, OMEGA);
-// }
 
 void RobotAxis::setDirection(bool IS_POSITIVE) {
     _isPositive = IS_POSITIVE;

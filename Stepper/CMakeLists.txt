@@ -5,5 +5,5 @@ add_library (
 )
 
 find_library(wiringPi_LIB wiringPi)
-target_link_libraries(Stepper ${wiringPi_LIB})
+target_link_libraries(Stepper ${wiringPi_LIB} -lcrypt -lrt)
 target_include_directories(Stepper PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
